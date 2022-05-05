@@ -4,12 +4,16 @@ import 'dart:io';
 import 'package:appoint_webapp/doctor/appointment_archives.dart';
 import 'package:appoint_webapp/doctor/appointment_form.dart';
 import 'package:appoint_webapp/doctor/patient_statistics.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../model/AppointmentList.dart';
 import '../model/User.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+
 
 class ListOfPatients extends StatefulWidget {
   late User user;
@@ -25,6 +29,8 @@ class _ListOfPatientsState extends State<ListOfPatients> {
   static const String SERVER_IP = 'https://pz-backend2022.herokuapp.com/api';
   late AppointmentList _appointmentList;
   late List _dayOfAppointment;
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  FlutterLocalNotificationsPlugin();
   final List<String> _columnList = [
     "Name",
     "Surname",
@@ -45,7 +51,7 @@ class _ListOfPatientsState extends State<ListOfPatients> {
   }
 
   _getAppointmentList() async {
-    print("$SERVER_IP/doctor/appointments");
+    print("$SERVER_IP/Doctor/Appointments");
     var res = await http.get(
         Uri.dataFromString("$SERVER_IP/Doctor/Appointments"),
         headers: {HttpHeaders.authorizationHeader: "Bearer " + user.token});
@@ -61,6 +67,20 @@ class _ListOfPatientsState extends State<ListOfPatients> {
       //   table.members.add(member["email"]);
       // }
     }
+  }
+  Future<void> _zonedScheduleNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        'scheduled title',
+        'scheduled body',
+        tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+        const NotificationDetails(
+            android: AndroidNotificationDetails(
+                'your channel id', 'your channel name',
+                channelDescription: 'your channel description')),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+        UILocalNotificationDateInterpretation.absoluteTime);
   }
 
   @override

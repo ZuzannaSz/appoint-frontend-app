@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 class ScheduleAppointment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final String SERVER_IP = "https://pz-backend2022.herokuapp.com";
+    final String SERVER_IP = "https://pz-backend2022.herokuapp.com/api";
 
     registerAppointment() async {
       var response = http.post(Uri.parse('$SERVER_IP/Appointment/Register'),
