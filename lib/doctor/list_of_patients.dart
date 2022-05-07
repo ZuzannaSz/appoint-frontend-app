@@ -4,16 +4,14 @@ import 'dart:io';
 import 'package:appoint_webapp/doctor/appointment_archives.dart';
 import 'package:appoint_webapp/doctor/appointment_form.dart';
 import 'package:appoint_webapp/doctor/patient_statistics.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
+import 'package:timezone/timezone.dart' as tz;
 
 import '../model/AppointmentList.dart';
 import '../model/User.dart';
-import 'package:timezone/data/latest_all.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
-
 
 class ListOfPatients extends StatefulWidget {
   late User user;
@@ -30,7 +28,7 @@ class _ListOfPatientsState extends State<ListOfPatients> {
   late AppointmentList _appointmentList;
   late List _dayOfAppointment;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin();
   final List<String> _columnList = [
     "Name",
     "Surname",
@@ -52,9 +50,14 @@ class _ListOfPatientsState extends State<ListOfPatients> {
 
   _getAppointmentList() async {
     print("$SERVER_IP/Doctor/Appointments");
+    print("user token ${user.token}");
     var res = await http.get(
-        Uri.dataFromString("$SERVER_IP/Doctor/Appointments"),
-        headers: {HttpHeaders.authorizationHeader: "Bearer " + user.token});
+      Uri.parse("$SERVER_IP/Doctor/Appointments"),
+      headers: {
+        HttpHeaders.authorizationHeader: "Bearer " + user.token,
+        HttpHeaders.contentTypeHeader: "application/json; charset=utf-8",
+      },
+    );
     print("getting appointment list");
     print(res.body);
     if (res.statusCode != 200) {
@@ -62,12 +65,15 @@ class _ListOfPatientsState extends State<ListOfPatients> {
     } else {
       var jsonResponse = json.decode(res.body);
       print(jsonResponse);
+      _appointmentList.setAppointmentMap(res.body);
+      setState(() {});
       // for (var member in jsonResponse["board"]["members"]) {
       //   if (member["email"] == user.email) user.name = member["name"];
       //   table.members.add(member["email"]);
       // }
     }
   }
+
   Future<void> _zonedScheduleNotification() async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
@@ -80,7 +86,7 @@ class _ListOfPatientsState extends State<ListOfPatients> {
                 channelDescription: 'your channel description')),
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
-        UILocalNotificationDateInterpretation.absoluteTime);
+            UILocalNotificationDateInterpretation.absoluteTime);
   }
 
   @override
@@ -107,14 +113,14 @@ class _ListOfPatientsState extends State<ListOfPatients> {
               case 1:
                 Navigator.of(context).pop();
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AppointmentForm()));
+                    MaterialPageRoute(builder: (context) => AppointmentForm(user: user)));
                 break;
               case 2:
                 Navigator.of(context).pop();
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AppointmentArchives()));
+                        builder: (context) => AppointmentArchives(user: user)));
                 break;
             }
           },
@@ -189,36 +195,26 @@ class _ListOfPatientsState extends State<ListOfPatients> {
                       : null,
                   child: InkWell(
                     onTap: () {
-                      switch(index){
+                      switch (index) {
                         case 0:
                           _dayOfAppointment = _appointmentList.getMonday();
-                          setState(() {
-
-                          });
+                          setState(() {});
                           break;
                         case 1:
                           _dayOfAppointment = _appointmentList.getTuesday();
-                          setState(() {
-
-                          });
+                          setState(() {});
                           break;
                         case 2:
                           _dayOfAppointment = _appointmentList.getWednesday();
-                          setState(() {
-
-                          });
+                          setState(() {});
                           break;
                         case 3:
                           _dayOfAppointment = _appointmentList.getThursday();
-                          setState(() {
-
-                          });
+                          setState(() {});
                           break;
                         case 4:
                           _dayOfAppointment = _appointmentList.getFriday();
-                          setState(() {
-
-                          });
+                          setState(() {});
                           break;
                       }
                     },
@@ -269,7 +265,7 @@ class _ListOfPatientsState extends State<ListOfPatients> {
                           width: 80.0,
                           height: 200.0,
                           child: ListView.builder(
-                              itemCount: _dayOfAppointment.length+1,
+                              itemCount: _dayOfAppointment.length + 1,
                               itemBuilder: (context, index2) {
                                 if (index2 == 0) {
                                   if (index1 == 0) {
@@ -288,7 +284,8 @@ class _ListOfPatientsState extends State<ListOfPatients> {
                                           height: 50,
                                           child: Text("Surname",
                                               style: TextStyle(
-                                                  fontWeight: FontWeight.bold))),
+                                                  fontWeight:
+                                                      FontWeight.bold))),
                                     );
                                   } else if (index1 == 2) {
                                     return const Center(
@@ -296,7 +293,8 @@ class _ListOfPatientsState extends State<ListOfPatients> {
                                           height: 50,
                                           child: Text("Age",
                                               style: TextStyle(
-                                                  fontWeight: FontWeight.bold))),
+                                                  fontWeight:
+                                                      FontWeight.bold))),
                                     );
                                   } else if (index1 == 3) {
                                     return const Center(
@@ -304,7 +302,8 @@ class _ListOfPatientsState extends State<ListOfPatients> {
                                           height: 50,
                                           child: Text("Phone number",
                                               style: TextStyle(
-                                                  fontWeight: FontWeight.bold))),
+                                                  fontWeight:
+                                                      FontWeight.bold))),
                                     );
                                   } else {
                                     return const Center(
@@ -312,7 +311,8 @@ class _ListOfPatientsState extends State<ListOfPatients> {
                                           height: 50,
                                           child: Text("Date",
                                               style: TextStyle(
-                                                  fontWeight: FontWeight.bold))),
+                                                  fontWeight:
+                                                      FontWeight.bold))),
                                     );
                                   }
                                 } else {
@@ -328,7 +328,8 @@ class _ListOfPatientsState extends State<ListOfPatients> {
                                       child: SizedBox(
                                           height: 35,
                                           child: Text(
-                                              _dayOfAppointment[index2-1][_columnList[index1]])),
+                                              _dayOfAppointment[index2 - 1]
+                                                  [_columnList[index1]])),
                                     ),
                                   );
                                 }

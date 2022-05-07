@@ -38,14 +38,14 @@ class PatientStatistics extends StatelessWidget {
               case 1:
                 Navigator.of(context).pop();
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AppointmentForm()));
+                    MaterialPageRoute(builder: (context) => AppointmentForm(user: user)));
                 break;
               case 2:
                 Navigator.of(context).pop();
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AppointmentArchives()));
+                        builder: (context) => AppointmentArchives(user:user)));
                 break;
             }
           },

@@ -16,24 +16,45 @@ class AppointmentList {
         "Age": "24",
         "Phone Number": "743 123 382",
         "Date": "2022-10-31T01:30:00.000-05:00"
+      },
+      {
+        "Name": "Bobby",
+        "Surname": "Burger",
+        "Age": "25",
+        "Phone Number": "743 123 382",
+        "Date": "2022-10-31T01:30:00.000-05:00"
+      },
+      {
+        "Name": "Bat",
+        "Surname": "Man",
+        "Age": "999",
+        "Phone Number": "743 123 382",
+        "Date": "2022-10-31T01:30:00.000-05:00"
       }
     ],
     "Tuesday": [
       {
-        "Name": "Jan",
-        "Surname": "Kowalski",
+        "Name": "Bob",
+        "Surname": "Marley",
         "Age": "20",
         "Phone Number": "783 123 382",
-        "Date": "2022-10-31T01:30:00.000-05:00"
+        "Date": "2022-10-31T02:30:00.000-05:00"
+      },
+      {
+        "Name": "Indiana",
+        "Surname": "Jones",
+        "Age": "20",
+        "Phone Number": "783 123 382",
+        "Date": "2022-10-31T02:30:00.000-05:00"
       }
     ],
     "Wednesday": [
       {
-        "Name": "Jan",
-        "Surname": "Kowalski",
+        "Name": "Angelina",
+        "Surname": "Joline",
         "Age": "20",
         "Phone Number": "783 123 382",
-        "Date": "2022-10-31T01:30:00.000-05:00"
+        "Date": "2022-10-31T03:30:00.000-05:00"
       }
     ],
     "Thursday": [
@@ -42,7 +63,14 @@ class AppointmentList {
         "Surname": "Kowalski",
         "Age": "20",
         "Phone Number": "783 123 382",
-        "Date": "2022-10-31T01:30:00.000-05:00"
+        "Date": "2022-10-31T04:30:00.000-05:00"
+      },
+      {
+        "Name": "Dobry",
+        "Surname": "Ziomek",
+        "Age": "20",
+        "Phone Number": "783 123 382",
+        "Date": "2022-10-31T04:30:00.000-05:00"
       }
     ],
     "Friday": [
@@ -51,7 +79,7 @@ class AppointmentList {
         "Surname": "Kowalski",
         "Age": "20",
         "Phone Number": "783 123 382",
-        "Date": "2022-10-31T01:30:00.000-05:00"
+        "Date": "2022-10-31T05:30:00.000-05:00"
       }
     ]
   };

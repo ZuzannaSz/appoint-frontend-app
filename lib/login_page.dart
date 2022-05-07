@@ -37,7 +37,7 @@ class SignInForm extends StatefulWidget {
   _SignInFormState createState() => _SignInFormState();
 }
 
-User user = new User();
+User user = User();
 
 class _SignInFormState extends State<SignInForm> {
   final _emailTextController = TextEditingController();
@@ -79,7 +79,7 @@ class _SignInFormState extends State<SignInForm> {
       Map decodedToken = parseJwt(user.token);
       if(decodedToken['role'] == "administrator"){
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => ScheduleAppointment()));
+            MaterialPageRoute(builder: (context) => ScheduleAppointment(user: user,)));
       }else{
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => ListOfPatients(user: user,)));

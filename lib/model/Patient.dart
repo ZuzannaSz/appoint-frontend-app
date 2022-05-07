@@ -1,10 +1,10 @@
 class Patient {
   late String name;
   late String surname;
-  late String pNumber;
+  late String telephoneNumber;
   late DateTime dateOfRegister;
 
-  Patient(this.name, this.surname) {
+  Patient(this.name, this.surname, this.telephoneNumber) {
     dateOfRegister = DateTime.now();
   }
 }

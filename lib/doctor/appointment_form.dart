@@ -1,17 +1,26 @@
 import 'package:appoint_webapp/doctor/list_of_patients.dart';
 import 'package:flutter/material.dart';
 
+
 import '../model/User.dart';
 import 'appointment_archives.dart';
 
 class AppointmentForm extends StatefulWidget {
+  late User user;
   @override
   _AppointmentFormState createState() => _AppointmentFormState();
+  AppointmentForm({Key? key, required this.user}) : super(key: key);
 }
 
 class _AppointmentFormState extends State<AppointmentForm> {
   late User user;
   String _dropValue = "success";
+
+  @override
+  void initState() {
+    user = widget.user;
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +55,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => AppointmentArchives()));
+                          builder: (context) => AppointmentArchives(user: user)));
                   break;
               }
             },
