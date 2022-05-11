@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../model/User.dart';
 import 'appointment_form.dart';
-import 'list_of_patients.dart';
+import 'list_of_appointments.dart';
 
 class AppointmentArchives extends StatelessWidget {
   late User user;
@@ -36,7 +36,7 @@ class AppointmentArchives extends StatelessWidget {
               case 0:
                 Navigator.of(context).pop();
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ListOfPatients(user: user)));
+                    MaterialPageRoute(builder: (context) => ListOfAppointments(user: user)));
                 break;
               case 1:
                 Navigator.of(context).pop();

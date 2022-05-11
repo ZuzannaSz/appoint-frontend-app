@@ -4,31 +4,45 @@ import 'dart:io';
 import 'package:appoint_webapp/doctor/appointment_archives.dart';
 import 'package:appoint_webapp/doctor/appointment_form.dart';
 import 'package:appoint_webapp/doctor/patient_statistics.dart';
+import 'package:appoint_webapp/model/ScheduledNotification.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
-import 'package:timezone/timezone.dart' as tz;
 
+import '../main.dart';
 import '../model/AppointmentList.dart';
 import '../model/User.dart';
 
-class ListOfPatients extends StatefulWidget {
+class ListOfAppointments extends StatefulWidget {
   late User user;
 
   @override
-  _ListOfPatientsState createState() => _ListOfPatientsState();
+  _ListOfAppointmentsState createState() => _ListOfAppointmentsState();
 
-  ListOfPatients({Key? key, required this.user}) : super(key: key);
+  ListOfAppointments({Key? key, required this.user}) : super(key: key);
 }
 
-class _ListOfPatientsState extends State<ListOfPatients> {
+class _ListOfAppointmentsState extends State<ListOfAppointments> {
   int day = 0;
-  static const String SERVER_IP = 'https://pz-backend2022.herokuapp.com/api';
-  late AppointmentList _appointmentList;
-  late List _dayOfAppointment;
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  final String SERVER_IP = 'https://pz-backend2022.herokuapp.com/api';
+  late final AppointmentList _appointmentList = AppointmentList();
+  late List _dayOfAppointment = _appointmentList.getDay(DateTime.now().weekday);
+
+  _displayNotification() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails('your channel id', 'your channel name',
+            channelDescription: 'your channel description',
+            importance: Importance.max,
+            priority: Priority.high,
+            ticker: 'ticker');
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'plain title', 'plain body', platformChannelSpecifics,
+        payload: 'item x');
+  }
+
   final List<String> _columnList = [
     "Name",
     "Surname",
@@ -40,17 +54,44 @@ class _ListOfPatientsState extends State<ListOfPatients> {
 
   @override
   void initState() {
-    user = widget.user;
-    _appointmentList = AppointmentList();
-    _dayOfAppointment = _appointmentList.getMonday();
-    print(_dayOfAppointment);
-    _getAppointmentList();
     super.initState();
+    user = widget.user;
+    initAppointmentList();
+
+    initNotification();
+    setState(() {});
   }
 
-  _getAppointmentList() async {
-    print("$SERVER_IP/Doctor/Appointments");
-    print("user token ${user.token}");
+  initNotification() async {
+    DateTime now = DateTime.now();
+    // String appointmentDate = _dayOfAppointment[0]["Date"];
+    String appointmentDate =
+        DateTime(now.year, now.month, now.day, now.hour, now.minute + 5)
+            .toIso8601String();
+    DateTime parsedDate = DateTime.parse(appointmentDate);
+    NotificationAppLaunchDetails? details =
+        await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+    print(details?.didNotificationLaunchApp);
+    ScheduledNotification startNotification = ScheduledNotification(
+        id: 0,
+        title: "Appointment started",
+        body: "Your appointment on ${parsedDate.weekday} ${parsedDate.hour}:${parsedDate.minute}:00 has started!",
+        payload: "Appointment start",
+        delay: ScheduledNotification.countDelayInMinutes(appointmentDate));
+    startNotification.scheduleNotification();
+    details =
+        await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+    print(details?.didNotificationLaunchApp);
+  }
+
+  initAppointmentList() async {
+    await _getAppointmentList();
+    _dayOfAppointment = _appointmentList.getDay(DateTime.now().weekday);
+  }
+
+  Future<AppointmentList?> _getAppointmentList() async {
+    // print("$SERVER_IP/Doctor/Appointments");
+    // print("user token ${user.token}");
     var res = await http.get(
       Uri.parse("$SERVER_IP/Doctor/Appointments"),
       headers: {
@@ -62,31 +103,17 @@ class _ListOfPatientsState extends State<ListOfPatients> {
     print(res.body);
     if (res.statusCode != 200) {
       print("Error");
+      return null;
     } else {
-      var jsonResponse = json.decode(res.body);
+      Map jsonResponse = json.decode(res.body);
       print(jsonResponse);
-      _appointmentList.setAppointmentMap(res.body);
-      setState(() {});
+
       // for (var member in jsonResponse["board"]["members"]) {
       //   if (member["email"] == user.email) user.name = member["name"];
       //   table.members.add(member["email"]);
       // }
+      _appointmentList.setAppointmentMap(jsonResponse);
     }
-  }
-
-  Future<void> _zonedScheduleNotification() async {
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
-        'scheduled title',
-        'scheduled body',
-        tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
-        const NotificationDetails(
-            android: AndroidNotificationDetails(
-                'your channel id', 'your channel name',
-                channelDescription: 'your channel description')),
-        androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime);
   }
 
   @override
@@ -112,8 +139,10 @@ class _ListOfPatientsState extends State<ListOfPatients> {
             switch (option) {
               case 1:
                 Navigator.of(context).pop();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AppointmentForm(user: user)));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AppointmentForm(user: user)));
                 break;
               case 2:
                 Navigator.of(context).pop();
@@ -194,7 +223,7 @@ class _ListOfPatientsState extends State<ListOfPatients> {
                       ? const Color.fromARGB(161, 93, 176, 117)
                       : null,
                   child: InkWell(
-                    onTap: () {
+                    onTap: () async {
                       switch (index) {
                         case 0:
                           _dayOfAppointment = _appointmentList.getMonday();
@@ -202,7 +231,6 @@ class _ListOfPatientsState extends State<ListOfPatients> {
                           break;
                         case 1:
                           _dayOfAppointment = _appointmentList.getTuesday();
-                          setState(() {});
                           break;
                         case 2:
                           _dayOfAppointment = _appointmentList.getWednesday();
@@ -322,7 +350,7 @@ class _ListOfPatientsState extends State<ListOfPatients> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  PatientStatistics()));
+                                                  PatientStatistics(),)));
                                     },
                                     child: Center(
                                       child: SizedBox(
@@ -338,7 +366,7 @@ class _ListOfPatientsState extends State<ListOfPatients> {
                       ),
                     );
                   })),
-        )
+        ),
       ],
     );
   }
@@ -346,8 +374,8 @@ class _ListOfPatientsState extends State<ListOfPatients> {
   _buildTextField(String hintText) {
     return TextField(
         decoration: InputDecoration(
-      contentPadding: EdgeInsets.symmetric(vertical: 10),
-      prefixIcon: Icon(Icons.search),
+      contentPadding: const EdgeInsets.symmetric(vertical: 10),
+      prefixIcon: const Icon(Icons.search),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
       hintText: hintText,
     ));

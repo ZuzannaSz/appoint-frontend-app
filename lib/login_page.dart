@@ -1,7 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
 
-import 'package:appoint_webapp/doctor/list_of_patients.dart';
+import 'package:appoint_webapp/doctor/list_of_appointments.dart';
 import 'package:appoint_webapp/secretary/schedule_appointment.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -82,7 +82,7 @@ class _SignInFormState extends State<SignInForm> {
             MaterialPageRoute(builder: (context) => ScheduleAppointment(user: user,)));
       }else{
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => ListOfPatients(user: user,)));
+            MaterialPageRoute(builder: (context) => ListOfAppointments(user: user,)));
       }
 
     } else {

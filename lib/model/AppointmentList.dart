@@ -108,4 +108,22 @@ class AppointmentList {
   int length(){
     return appointmentMap.length;
   }
+
+  List getDay(int weekday) {
+    switch(weekday){
+      case 0:
+        return getMonday();
+      case 1:
+        return getTuesday();
+      case 2:
+        return getWednesday();
+      case 3:
+        return getThursday();
+      case 4:
+        return getFriday();
+      default:
+        return getMonday();
+    }
+
+  }
 }

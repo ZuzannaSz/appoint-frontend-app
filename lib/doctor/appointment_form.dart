@@ -1,4 +1,4 @@
-import 'package:appoint_webapp/doctor/list_of_patients.dart';
+import 'package:appoint_webapp/doctor/list_of_appointments.dart';
 import 'package:flutter/material.dart';
 
 
@@ -48,7 +48,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ListOfPatients(user: user)));
+                          builder: (context) => ListOfAppointments(user: user)));
                   break;
                 case 2:
                   Navigator.of(context).pop();

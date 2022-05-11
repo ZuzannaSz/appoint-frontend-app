@@ -3,8 +3,10 @@ import 'dart:io';
 
 import 'package:appoint_webapp/secretary/register_patient.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 
+import '../doctor/appointment_Notification.dart';
 import '../model/Patient.dart';
 import '../model/User.dart';
 
@@ -18,6 +20,9 @@ class ScheduleAppointment extends StatefulWidget {
 }
 
 class _ScheduleAppointment extends State<ScheduleAppointment> {
+
+
+
   static const String SERVER_IP = 'https://pz-backend2022.herokuapp.com/api';
   late User user;
   late List<Patient> _patientList;
@@ -29,6 +34,8 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
     _getPatientList();
     super.initState();
   }
+
+
 
   _getPatientList() async {
     print("$SERVER_IP/Doctor/Appointments");
@@ -138,7 +145,7 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
                   ),
                   margin: const EdgeInsets.all(16.0),
                   child: ListView.builder(
-                      itemCount: _patientList.length +1,
+                      itemCount: _patientList.length + 1,
                       itemBuilder: (context, index) {
                         if (index < _patientList.length) {
                           return _buildRecord(
@@ -211,7 +218,7 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
         padding: const EdgeInsets.fromLTRB(20, 15, 0, 15),
         child: ListView(
           scrollDirection: Axis.horizontal,
-          children:  [
+          children: [
             Text(
               name,
               style: TextStyle(fontSize: 20),
