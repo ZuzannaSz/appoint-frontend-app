@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:appoint_webapp/doctor/appointment_archives.dart';
-import 'package:appoint_webapp/doctor/appointment_form.dart';
 import 'package:appoint_webapp/doctor/patient_statistics.dart';
+import 'package:appoint_webapp/model/AppointmentInfo.dart';
 import 'package:appoint_webapp/model/ScheduledNotification.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +56,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
   void initState() {
     super.initState();
     user = widget.user;
-    initAppointmentList();
+    // initAppointmentList();
 
     initNotification();
     setState(() {});
@@ -75,7 +75,8 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
     ScheduledNotification startNotification = ScheduledNotification(
         id: 0,
         title: "Appointment started",
-        body: "Your appointment on ${parsedDate.weekday} ${parsedDate.hour}:${parsedDate.minute}:00 has started!",
+        body:
+            "Your appointment on ${_appointmentList.getDays()[parsedDate.weekday]} ${parsedDate.hour}:${parsedDate.minute}:00 has started!",
         payload: "Appointment start",
         delay: ScheduledNotification.countDelayInMinutes(appointmentDate));
     startNotification.scheduleNotification();
@@ -127,10 +128,6 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
               label: 'App. List',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.article),
-              label: 'App. Form',
-            ),
-            BottomNavigationBarItem(
               icon: Icon(Icons.library_books),
               label: 'App. History',
             ),
@@ -138,13 +135,6 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
           onTap: (option) {
             switch (option) {
               case 1:
-                Navigator.of(context).pop();
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => AppointmentForm(user: user)));
-                break;
-              case 2:
                 Navigator.of(context).pop();
                 Navigator.push(
                     context,
@@ -231,6 +221,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                           break;
                         case 1:
                           _dayOfAppointment = _appointmentList.getTuesday();
+                          setState(() {});
                           break;
                         case 2:
                           _dayOfAppointment = _appointmentList.getWednesday();
@@ -346,11 +337,33 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                                 } else {
                                   return InkWell(
                                     onTap: () {
+                                      String fullDate =
+                                          _dayOfAppointment[index2 - 1]["Date"];
+                                      String date = fullDate.substring(
+                                          0, fullDate.indexOf("T"));
+                                      String time = fullDate
+                                          .substring(fullDate.indexOf("T") + 1,fullDate.indexOf("T") + 9);
+                                      NewAppointment appointment =
+                                          NewAppointment(
+                                              patientName:
+                                                  _dayOfAppointment[index2 - 1]
+                                                      ["Name"],
+                                              patientSurname:
+                                                  _dayOfAppointment[index2 - 1]
+                                                      ["Surname"],
+                                              phoneNumber:
+                                                  _dayOfAppointment[index2 - 1]
+                                                      ["Phone Number"],
+                                              date: date,
+                                              time: time);
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) =>
-                                                  PatientStatistics(),)));
+                                            builder: (context) =>
+                                                PatientStatistics(
+                                                    appointment: appointment,
+                                                    user: user),
+                                          ));
                                     },
                                     child: Center(
                                       child: SizedBox(

@@ -1,4 +1,5 @@
 import 'package:appoint_webapp/doctor/list_of_appointments.dart';
+import 'package:appoint_webapp/model/AppointmentInfo.dart';
 import 'package:flutter/material.dart';
 
 
@@ -7,9 +8,10 @@ import 'appointment_archives.dart';
 
 class AppointmentForm extends StatefulWidget {
   late User user;
+  late NewAppointment appointment;
   @override
   _AppointmentFormState createState() => _AppointmentFormState();
-  AppointmentForm({Key? key, required this.user}) : super(key: key);
+  AppointmentForm({Key? key, required this.user, required this.appointment}) : super(key: key);
 }
 
 class _AppointmentFormState extends State<AppointmentForm> {
@@ -26,15 +28,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
     return Scaffold(
         bottomNavigationBar: BottomNavigationBar(
             backgroundColor: const Color(0xFF5DB075),
-            currentIndex: 1,
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.menu_book),
                 label: 'App. List',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.article),
-                label: 'App. form',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.library_books),
@@ -84,7 +81,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
             color: Colors.white,
           ),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
+            padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
             child: Column(
               children: [
                 const SizedBox(
@@ -101,72 +98,72 @@ class _AppointmentFormState extends State<AppointmentForm> {
                   height: 30,
                 ),
                 Row(
-                  children: const [
-                    Text(
+                  children: [
+                    const Text(
                       "Name: ",
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 30,
                     ),
-                    Text("")
+                    Text(widget.appointment.patientName)
                   ],
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 Row(
-                  children: const [
-                    Text(
+                  children:  [
+                    const Text(
                       "Surname: ",
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 30,
                     ),
-                    Text("")
+                    Text(widget.appointment.patientSurname)
                   ],
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 Row(
-                  children: const [
-                    Text(
+                  children:  [
+                    const Text(
                       "Phone Number: ",
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 30,
                     ),
-                    Text("")
+                    Text(widget.appointment.phoneNumber),
                   ],
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 Row(
-                  children: const [
-                    Text(
+                  children: [
+                    const Text(
                       "Appointment date: ",
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 30,
                     ),
-                    Text("")
+                    Text(widget.appointment.date)
                   ],
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 Row(
-                  children: const [
-                    Text(
+                  children:  [
+                    const Text(
                       "Appointment time: ",
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
@@ -174,23 +171,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                     SizedBox(
                       width: 30,
                     ),
-                    Text("")
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  children: const [
-                    Text(
-                      "Finished at: ",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                    SizedBox(
-                      width: 30,
-                    ),
-                    Text("")
+                    Text(widget.appointment.time)
                   ],
                 ),
                 const SizedBox(
@@ -227,10 +208,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
                       }),
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 20,
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 50, 0),
+                  padding: const EdgeInsets.fromLTRB(0, 0, 40, 0),
                   child: ElevatedButton(
                       onPressed: () {},
                       child: const Text(
@@ -238,7 +219,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                         style: TextStyle(fontSize: 16),
                       ),
                       style: ButtonStyle(
-                          fixedSize: MaterialStateProperty.all(const Size(100, 40)),
+                          fixedSize: MaterialStateProperty.all(const Size(100, 50)),
                           backgroundColor:
                           MaterialStateProperty.all(const Color(0xFF5DB075)),
                           shape: MaterialStateProperty.all<RoundedRectangleBorder>(

@@ -1,4 +1,4 @@
-import 'package:appoint_webapp/model/ArchivedAppointment.dart';
+import 'package:appoint_webapp/model/AppointmentInfo.dart';
 import 'package:flutter/material.dart';
 
 import '../model/User.dart';
@@ -15,16 +15,12 @@ class AppointmentArchives extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2,
+        currentIndex: 1,
           backgroundColor: const Color(0xFF5DB075),
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.menu_book),
               label: 'App. List',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.article),
-              label: 'App. Form',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.library_books),
@@ -37,11 +33,6 @@ class AppointmentArchives extends StatelessWidget {
                 Navigator.of(context).pop();
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => ListOfAppointments(user: user)));
-                break;
-              case 1:
-                Navigator.of(context).pop();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AppointmentForm(user: user)));
                 break;
             }
           },
