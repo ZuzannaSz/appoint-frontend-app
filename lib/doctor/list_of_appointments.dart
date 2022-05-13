@@ -362,7 +362,8 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                                             builder: (context) =>
                                                 PatientStatistics(
                                                     appointment: appointment,
-                                                    user: user),
+                                                    user: user
+                                                ),
                                           ));
                                     },
                                     child: Center(

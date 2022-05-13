@@ -11,7 +11,7 @@ import 'list_of_appointments.dart';
 class PatientStatistics extends StatelessWidget {
   late User user;
   late NewAppointment appointment;
-
+  late bool archived = false;
   PatientStatistics({Key? key, required this.appointment, required this.user})
       : super(key: key);
 
@@ -167,7 +167,7 @@ class PatientStatistics extends StatelessWidget {
       const SizedBox(
         height: 60,
       ),
-      Padding(
+      archived?Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 60, 0),
         child: ElevatedButton(
             onPressed: () {
@@ -187,7 +187,7 @@ class PatientStatistics extends StatelessWidget {
                     RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 )))),
-      ),
+      ):null,
       const SizedBox(
         height: 80,
       ),

@@ -47,7 +47,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                       MaterialPageRoute(
                           builder: (context) => ListOfAppointments(user: user)));
                   break;
-                case 2:
+                case 1:
                   Navigator.of(context).pop();
                   Navigator.push(
                       context,
