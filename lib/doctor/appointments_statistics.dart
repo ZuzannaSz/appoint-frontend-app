@@ -8,11 +8,11 @@ import '../model/User.dart';
 import 'appointment_archives.dart';
 import 'list_of_appointments.dart';
 
-class PatientStatistics extends StatelessWidget {
+class AppointmentStatistics extends StatelessWidget {
   late User user;
   late NewAppointment appointment;
-  late bool archived = false;
-  PatientStatistics({Key? key, required this.appointment, required this.user})
+  late bool archived;
+  AppointmentStatistics({Key? key, required this.appointment, required this.user,required this.archived})
       : super(key: key);
 
   @override
@@ -167,7 +167,7 @@ class PatientStatistics extends StatelessWidget {
       const SizedBox(
         height: 60,
       ),
-      archived?Padding(
+      !archived?Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 60, 0),
         child: ElevatedButton(
             onPressed: () {
@@ -176,7 +176,7 @@ class PatientStatistics extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => AppointmentForm(user: user, appointment: appointment,)));
+                      builder: (context) => AppointmentForm(user: user, appointment: ArchivedAppointment.fromNewAppointment(appointment),)));
             },
             child: const Text("App. Form", style: TextStyle(fontSize: 18),),
             style: ButtonStyle(
@@ -187,7 +187,7 @@ class PatientStatistics extends StatelessWidget {
                     RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 )))),
-      ):null,
+      ):Padding(padding: EdgeInsets.all(0),),
       const SizedBox(
         height: 80,
       ),

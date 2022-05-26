@@ -1,8 +1,9 @@
-import 'package:appoint_webapp/doctor/patient_statistics.dart';
+import 'package:appoint_webapp/doctor/appointments_statistics.dart';
 import 'package:appoint_webapp/model/AppointmentInfo.dart';
 import 'package:flutter/material.dart';
 
 import '../model/User.dart';
+import 'arch_appointment_statistics.dart';
 import 'list_of_appointments.dart';
 
 class AppointmentArchives extends StatelessWidget {
@@ -10,7 +11,7 @@ class AppointmentArchives extends StatelessWidget {
 
   AppointmentArchives({Key? key, required this.user}) : super(key: key);
   List<ArchivedAppointment> archivedAppointments = [
-    ArchivedAppointment("Jan Kowalski", "26:01:2021", "success")
+    ArchivedAppointment("Jan","Kowalski", "26:01:2021", "success")
   ];
 
   @override
@@ -59,20 +60,16 @@ class AppointmentArchives extends StatelessWidget {
               children: [
                 for (var archApp in archivedAppointments)InkWell(
                     onTap: () {
-                      NewAppointment appointment = NewAppointment(
-                          patientName: archApp.patient,
-                          patientSurname: archApp.patient,
-                          phoneNumber: "783 213 039",
-                          date: "02-12-2022",
-                          time: "12:22");
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PatientStatistics(
-                              appointment: appointment,
-                              user: user,
-                            ),
-                          ));
+                      
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => ArchAppointmentStatistics(
+                      //         appointment: appointment,
+                      //         user: user,
+                      //         archived: true,
+                      //       ),
+                      //     ));
                     },
                     child: _buildArchivedVisit(archApp))
 
@@ -109,7 +106,7 @@ class AppointmentArchives extends StatelessWidget {
                   "Patient Name:  ",
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                 ),
-                Text(archivedAppointment.patient,
+                Text("${archivedAppointment.patientName} ${archivedAppointment.patientSurname}",
                     style: TextStyle(fontSize: 17))
               ],
             ),

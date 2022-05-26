@@ -9,6 +9,7 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 import 'doctor/list_of_appointments.dart';
+import 'model/AppointmentInfo.dart';
 
 String? selectedNotificationPayload;
 final BehaviorSubject<String?> selectNotificationSubject =
@@ -20,25 +21,7 @@ List<String> _availableTimezones = <String>[];
 bool notificationStarted = false;
 void main() async{
 
-  WidgetsFlutterBinding.ensureInitialized();
-  _configureLocalTimeZone();
-  final NotificationAppLaunchDetails? notificationAppLaunchDetails =
-      await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
-
-  const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
-  const InitializationSettings initializationSettings = InitializationSettings(
-    android: initializationSettingsAndroid,
-  );
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onSelectNotification: (String? payload) async {
-        if (payload != null) {
-
-        }
-        selectedNotificationPayload = payload;
-        selectNotificationSubject.add(payload);
-      });
   runApp(const MyApp());
 }
 Future<void> _configureLocalTimeZone() async {
@@ -48,9 +31,34 @@ Future<void> _configureLocalTimeZone() async {
 }
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
+  _initNotifications(BuildContext context) async{
+    WidgetsFlutterBinding.ensureInitialized();
+    _configureLocalTimeZone();
+    final NotificationAppLaunchDetails? notificationAppLaunchDetails =
+        await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
+
+    const AndroidInitializationSettings initializationSettingsAndroid =
+    AndroidInitializationSettings('@mipmap/ic_launcher');
+    const InitializationSettings initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid,
+    );
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: (String? payload) async {
+          if (payload != null) {
+            print(payload);
+            // Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //         builder: (context) => AppointmentForm(user: user, appointment: null,)));
+          }
+          selectedNotificationPayload = payload;
+          selectNotificationSubject.add(payload);
+        });
+  }
   @override
   Widget build(BuildContext context) {
+    _initNotifications(context);
     return MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
