@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 
-import '../doctor/appointment_Notification.dart';
 import '../model/Patient.dart';
 import '../model/User.dart';
 
@@ -22,11 +21,12 @@ class ScheduleAppointment extends StatefulWidget {
 class _ScheduleAppointment extends State<ScheduleAppointment> {
 
 
-
+  int chosenRecord = 9999;
   static const String SERVER_IP = 'https://pz-backend2022.herokuapp.com/api';
   late User user;
   late List<Patient> _patientList;
-
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
   @override
   void initState() {
     user = widget.user;
@@ -70,7 +70,14 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
           headers: {
             HttpHeaders.contentTypeHeader: "application/json; charset=utf-8"
           },
-          body: jsonEncode({}));
+          body: jsonEncode({
+            "date":"${_dateController.text}T${_timeController.text}.000Z",
+            "length": 0,
+            "patientId": 0,
+            "userId": 0,
+            "roomId": 0
+          }));
+      print("${_dateController.text}T${_timeController.text}.000Z");
       print(response.then((value) => print(value.statusCode)));
     }
 
@@ -161,6 +168,36 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
               height: 20,
             ),
             Padding(
+              padding: const EdgeInsets.fromLTRB(60, 0, 100, 0),
+              child: TextField(
+                  controller: _dateController,
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.calendar_today),
+                    contentPadding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+                    hintText: "yyyy-mm-dd",
+                  )),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(60, 0, 100, 0),
+              child: TextField(
+                  controller: _timeController,
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.watch),
+                    contentPadding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+                    hintText: "hh:mm:ss",
+                  )),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Padding(
               padding: const EdgeInsets.fromLTRB(100, 0, 0, 0),
               child: Row(
                 children: [
@@ -209,28 +246,42 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
   }
 
   _buildRecord(String name, String number, int index) {
-    return Container(
-      width: 100,
-      height: 60,
-      decoration:
-          BoxDecoration(color: index % 2 == 1 ? Color(0x7B5DB075) : null),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 15, 0, 15),
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          children: [
-            Text(
-              name,
-              style: TextStyle(fontSize: 20),
-            ),
-            const SizedBox(
-              width: 30,
-            ),
-            Text(
-              number,
-              style: const TextStyle(fontSize: 20),
-            )
-          ],
+    return InkWell(
+      onTap: (){
+        print(chosenRecord);
+        if(chosenRecord == index) {
+          chosenRecord = 9999;
+        } else {
+          chosenRecord = index;
+        }
+        // _patientList[index].id;
+        setState(() {
+
+        });
+      },
+      child: Container(
+        width: 100,
+        height: 60,
+        decoration:
+            BoxDecoration(color: chosenRecord == index? const Color(0xFF5DB075): index % 2 == 1 ? Color(0x7B5DB075) : null),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 15, 0, 15),
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              Text(
+                name,
+                style: TextStyle(fontSize: 20, color: chosenRecord == index?Colors.white:Colors.black),
+              ),
+              const SizedBox(
+                width: 30,
+              ),
+              Text(
+                number,
+                style: const TextStyle(fontSize: 20),
+              )
+            ],
+          ),
         ),
       ),
     );
