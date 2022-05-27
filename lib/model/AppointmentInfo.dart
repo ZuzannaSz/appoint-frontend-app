@@ -1,8 +1,9 @@
+import 'Medicine.dart';
+
 class ArchivedAppointment {
   late String patientName;
   late String patientSurname;
   late String date;
-  late String status;
 
   late String time;
   late String phoneNumber;
@@ -12,15 +13,17 @@ class ArchivedAppointment {
   late String patientRemarks;
   late String visitRemarks;
   late bool receiptGiven = false;
+  late List<Medicine> prescriptionMeds;
+
+
 
   ArchivedAppointment(
-      this.patientName, this.patientSurname, this.date, this.status);
+      this.patientName, this.patientSurname, this.date, this.time);
 
   ArchivedAppointment.withDetailedInfo(
       this.patientName,
       this.patientSurname,
       this.date,
-      this.status,
       this.duration,
       this.necessary,
       this.patientRemarks,
@@ -28,7 +31,8 @@ class ArchivedAppointment {
       this.tookPlace,
       this.visitRemarks,
       this.time,
-      this.phoneNumber);
+      this.phoneNumber,
+      this.prescriptionMeds);
 
   ArchivedAppointment.fromNewAppointment(NewAppointment newAppointment) {
     patientName = newAppointment.patientName;

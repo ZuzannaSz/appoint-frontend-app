@@ -88,7 +88,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              AppointmentArchives(user: user)));
+                              AppointmentArchives(user:user)));
                   break;
               }
             },

@@ -3,16 +3,14 @@ import 'package:appoint_webapp/model/AppointmentInfo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../model/Patient.dart';
 import '../model/User.dart';
 import 'appointment_archives.dart';
 import 'list_of_appointments.dart';
 
 class AppointmentStatistics extends StatelessWidget {
-  late User user;
   late NewAppointment appointment;
-  late bool archived;
-  AppointmentStatistics({Key? key, required this.appointment, required this.user,required this.archived})
+  late User user;
+  AppointmentStatistics({Key? key, required this.appointment, required this.user})
       : super(key: key);
 
   @override
@@ -44,7 +42,9 @@ class AppointmentStatistics extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AppointmentArchives(user: user)));
+                        builder: (context) => AppointmentArchives(
+                              user: user,
+                            )));
                 break;
             }
           },
@@ -60,9 +60,8 @@ class AppointmentStatistics extends StatelessWidget {
           child: Container(
         width: 300.0,
         height: MediaQuery.of(context).size.height * 0.7,
-        margin: const EdgeInsets.all(16.0),
         child: ListView(
-            padding: const EdgeInsets.fromLTRB(60, 0, 0, 0),
+            padding: const EdgeInsets.fromLTRB(40, 0, 0, 0),
             children: _buildGeneralInformation(context)),
       )),
     );
@@ -132,7 +131,7 @@ class AppointmentStatistics extends StatelessWidget {
         height: 20,
       ),
       Row(
-        children:  [
+        children: [
           const Text(
             "Visit date: ",
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
@@ -144,7 +143,7 @@ class AppointmentStatistics extends StatelessWidget {
         height: 20,
       ),
       Row(
-        children:  [
+        children: [
           const Text(
             "Visit time: ",
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
@@ -167,18 +166,24 @@ class AppointmentStatistics extends StatelessWidget {
       const SizedBox(
         height: 60,
       ),
-      !archived?Padding(
+      Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 60, 0),
         child: ElevatedButton(
             onPressed: () {
-
               Navigator.of(context).pop();
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => AppointmentForm(user: user, appointment: ArchivedAppointment.fromNewAppointment(appointment),)));
+                      builder: (context) => AppointmentForm(
+                            user: user,
+                            appointment: ArchivedAppointment.fromNewAppointment(
+                                appointment),
+                          )));
             },
-            child: const Text("App. Form", style: TextStyle(fontSize: 18),),
+            child: const Text(
+              "App. Form",
+              style: TextStyle(fontSize: 18),
+            ),
             style: ButtonStyle(
                 fixedSize: MaterialStateProperty.all(const Size(60, 60)),
                 backgroundColor:
@@ -187,9 +192,9 @@ class AppointmentStatistics extends StatelessWidget {
                     RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 )))),
-      ):Padding(padding: EdgeInsets.all(0),),
+      ),
       const SizedBox(
-        height: 80,
+        height: 30,
       ),
     ];
   }

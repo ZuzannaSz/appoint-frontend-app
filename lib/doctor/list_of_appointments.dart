@@ -27,10 +27,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
   int day = 0;
   final String SERVER_IP = 'https://pz-backend2022.herokuapp.com/api';
   late final AppointmentList _appointmentList = AppointmentList();
-  late List _dayOfAppointment = _appointmentList.getDay(DateTime
-      .now()
-      .weekday);
-
+  late List _dayOfAppointment = _appointmentList.getDay(DateTime.now().weekday);
 
   final List<String> _columnList = [
     "patientName",
@@ -47,65 +44,49 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
     user = widget.user;
     initAppointmentList();
 
-    // initNotification();
-
+    initNotification();
   }
 
   initNotification() async {
     DateTime now = DateTime.now();
-    // String appointmentDate = _dayOfAppointment[0]["Date"];
+
+    // _dayOfAppointment.sort((appointmentOld,appointmentNew){appointment["date"]})
     String appointmentDate =
-    DateTime(now.year, now.month, now.day, now.hour, now.minute + 3)
-        .toIso8601String();
+        DateTime(now.year, now.month, now.day, now.hour, now.minute + 3)
+            .toIso8601String();
 
     DateTime parsedDate = DateTime.parse(appointmentDate);
     NotificationAppLaunchDetails? details =
-    await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+        await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
     print(details?.didNotificationLaunchApp);
-    String fullDate =
-    _dayOfAppointment[0]["date"];
-    String date = fullDate.substring(
-        0, fullDate.indexOf("T"));
-    String time = fullDate
-        .substring(fullDate.indexOf("T") + 1,
-        fullDate.indexOf("T") + 9);
+    String date = _dayOfAppointment[0]["date"];
+    String time = _dayOfAppointment[0]["time"];
     NewAppointment appointment = NewAppointment(
-        patientName:
-        _dayOfAppointment[0]
-        ["patient"]["name"],
-        patientSurname:
-        _dayOfAppointment[0]
-        ["patient"]["surname"],
-        phoneNumber:
-        _dayOfAppointment[0]
-        ["patient"]["telephoneNumber"],
+        patientName: _dayOfAppointment[0]["patientName"],
+        patientSurname: _dayOfAppointment[0]["patientSurname"],
+        phoneNumber: _dayOfAppointment[0]["telephoneNumber"],
         date: date,
         time: time,
-        length: _dayOfAppointment[0]
-        ["length"],
-        roomNumber: _dayOfAppointment[0]
-        ["room"]["number"],
-        roomSpecialization: _dayOfAppointment[0]
-        ["room"]["specialization"],
+        length: _dayOfAppointment[0]["length"],
+        roomNumber: _dayOfAppointment[0]["roomNumber"],
+        roomSpecialization: _dayOfAppointment[0]["roomSpecialization"],
         id: _dayOfAppointment[0]["id"]);
     ScheduledNotification startNotification = ScheduledNotification(
         id: 0,
         title: "Appointment started",
-        body:
-        "Your appointment on $date at $time has started!",
-        payload: appointment.toString(),
+        body: "Your appointment on $date at $time has started!",
+        payload: "${appointment.patientName}/${appointment.patientSurname}/${appointment.phoneNumber}/${appointment.date}/${appointment.time}/${user.username}/${user.token}/${user.refreshToken}",
         delay: ScheduledNotification.countDelayInMinutes(appointmentDate));
     startNotification.scheduleNotification();
     details =
-    await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+        await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
     print(details?.didNotificationLaunchApp);
+
   }
 
   initAppointmentList() async {
     // await _getAppointmentList();
-    _dayOfAppointment = _appointmentList.getDay(DateTime
-        .now()
-        .weekday);
+    _dayOfAppointment = _appointmentList.getDay(DateTime.now().weekday);
     setState(() {});
   }
 
@@ -130,8 +111,6 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
       print("app list response:\n$jsonResponse");
 
       _appointmentList.setAppointmentMap(jsonResponse);
-
-
     }
   }
 
@@ -189,12 +168,12 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
             width: 200,
             child: TextField(
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                  prefixIcon: const Icon(Icons.calendar_today),
-                  border:
+              contentPadding: const EdgeInsets.symmetric(vertical: 10),
+              prefixIcon: const Icon(Icons.calendar_today),
+              border:
                   OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-                  hintText: 'dd/mm/yyyy',
-                )),
+              hintText: 'dd/mm/yyyy',
+            )),
           ),
         ),
         const SizedBox(height: 20),
@@ -204,12 +183,12 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
             width: 200,
             child: TextField(
                 decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 10),
-                  prefixIcon: Icon(Icons.search),
-                  border:
+              contentPadding: EdgeInsets.symmetric(vertical: 10),
+              prefixIcon: Icon(Icons.search),
+              border:
                   OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-                  hintText: 'name/surname',
-                )),
+              hintText: 'name/surname',
+            )),
           ),
         ),
         const SizedBox(height: 30),
@@ -274,10 +253,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
         Center(
           child: Container(
               width: 300.0,
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .height * 0.4,
+              height: MediaQuery.of(context).size.height * 0.4,
               decoration: BoxDecoration(
                 boxShadow: const [
                   BoxShadow(
@@ -325,7 +301,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                                           child: Text("Surname",
                                               style: TextStyle(
                                                   fontWeight:
-                                                  FontWeight.bold))),
+                                                      FontWeight.bold))),
                                     );
                                   } else if (index1 == 2) {
                                     return const Center(
@@ -334,7 +310,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                                           child: Text("Phone number",
                                               style: TextStyle(
                                                   fontWeight:
-                                                  FontWeight.bold))),
+                                                      FontWeight.bold))),
                                     );
                                   } else if (index1 == 3) {
                                     return const Center(
@@ -343,7 +319,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                                           child: Text("Date",
                                               style: TextStyle(
                                                   fontWeight:
-                                                  FontWeight.bold))),
+                                                      FontWeight.bold))),
                                     );
                                   } else {
                                     return const Center(
@@ -352,43 +328,42 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                                           child: Text("Time",
                                               style: TextStyle(
                                                   fontWeight:
-                                                  FontWeight.bold))),
+                                                      FontWeight.bold))),
                                     );
                                   }
                                 } else {
                                   return InkWell(
                                     onTap: () {
-                                      NewAppointment appointment =
-                                      NewAppointment(
+                                      NewAppointment appointment = NewAppointment(
                                           patientName:
-                                          _dayOfAppointment[index2 - 1]
-                                          ["patientName"],
+                                              _dayOfAppointment[index2 - 1]
+                                                  ["patientName"],
                                           patientSurname:
-                                          _dayOfAppointment[index2 - 1]
-                                          ["patientSurname"],
+                                              _dayOfAppointment[index2 - 1]
+                                                  ["patientSurname"],
                                           phoneNumber:
-                                          _dayOfAppointment[index2 - 1]
-                                          ["telephoneNumber"],
+                                              _dayOfAppointment[index2 - 1]
+                                                  ["telephoneNumber"],
                                           date: _dayOfAppointment[index2 - 1]
-                                          ["date"],
+                                              ["date"],
                                           time: _dayOfAppointment[index2 - 1]
-                                          ["time"],
+                                              ["time"],
                                           length: _dayOfAppointment[index2 - 1]
-                                          ["length"],
-                                          roomNumber: _dayOfAppointment[index2 - 1]
-                                          ["roomNumber"],
-                                          roomSpecialization: _dayOfAppointment[index2 - 1]
-                                          ["roomSpecialization"],
+                                              ["length"],
+                                          roomNumber:
+                                              _dayOfAppointment[index2 - 1]
+                                                  ["roomNumber"],
+                                          roomSpecialization:
+                                              _dayOfAppointment[index2 - 1]
+                                                  ["roomSpecialization"],
                                           id: _dayOfAppointment[index2 - 1]["id"]);
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
                                                 AppointmentStatistics(
-                                                  appointment: appointment,
-                                                  user: user,
-                                                  archived: false,
-                                                ),
+                                                    appointment: appointment,
+                                                    user: user),
                                           ));
                                     },
                                     child: Center(
@@ -396,7 +371,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                                           height: 35,
                                           child: Text(
                                               _dayOfAppointment[index2 - 1]
-                                              [_columnList[index1]])),
+                                                  [_columnList[index1]])),
                                     ),
                                   );
                                 }
@@ -413,10 +388,10 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
   _buildTextField(String hintText) {
     return TextField(
         decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(vertical: 10),
-          prefixIcon: const Icon(Icons.search),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-          hintText: hintText,
-        ));
+      contentPadding: const EdgeInsets.symmetric(vertical: 10),
+      prefixIcon: const Icon(Icons.search),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+      hintText: hintText,
+    ));
   }
 }
