@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:appoint_webapp/model/AppointmentInfo.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -19,13 +20,12 @@ class AppointmentArchives extends StatefulWidget {
   _AppointmentArchivesState createState() => _AppointmentArchivesState();
 }
 
-
-
 class _AppointmentArchivesState extends State<AppointmentArchives> {
   final String SERVER_IP = 'https://pz-backend2022.herokuapp.com/api';
   List<ArchivedAppointment> archivedAppointments = [
     ArchivedAppointment("Jurek", "Kowalski", "26:01:2021", "12:42")
   ];
+  int patientIndex = 1;
 
   getArchivedAppointments(int id) async {
     var res = await http.get(
@@ -40,41 +40,46 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
       print(res.statusCode);
       print(res.reasonPhrase);
     } else {
+      archivedAppointments.clear();
       List jsonMap = await jsonDecode(res.body);
       print(jsonMap);
       for (var appointment in jsonMap) {
         List<Medicine> medicineList = [];
         for (var medicine in appointment["medicine"]) {
           medicineList.add(Medicine.withoutId(
-              doses: medicine["doses"],
+              doses: medicine["dosage"],
               name: medicine["name"],
               remarks: medicine["remarks"],
-              prescriptionDate: medicine["prescriptionDate"],
+              prescriptionDate:
+                  "${medicine["prescriptionDate"][""]} ${medicine["prescriptionDate"]} ${medicine["prescriptionDate"]}",
               schedule: medicine["schedule"],
-              unit: medicine["unit"]));
+              unit: medicine["timeUnit"]));
         }
 
         archivedAppointments.add(ArchivedAppointment.withDetailedInfo(
+            appointment["id"],
             appointment["patientName"],
             appointment["patientSurname"],
-            appointment["date"],
+            "${appointment["date"]["year"]}-${appointment["date"]["month"]}-${appointment["date"]["day"]}",
             appointment["length"],
             appointment["wasNecessary"],
-            appointment["patientRemarks"],
+            appointment["patientRemarks"][0]["remarks"],
             appointment["wasPrescriptionIssued"],
             appointment["tookPlace"],
             appointment["visitRemarks"],
-            appointment["time"],
+            "${appointment["time"]["hour"]}:${appointment["time"]["minute"]}:${appointment["time"]["second"]}",
             appointment["roomNumber"],
             medicineList));
       }
     }
   }
+
   late User user;
+
   @override
   void initState() {
-    // getPatientList();
     user = widget.user;
+    getPatientList();
     super.initState();
   }
 
@@ -94,10 +99,17 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
       List jsonMap = await jsonDecode(res.body);
       print(jsonMap);
       for (var jsonPatient in jsonMap) {
+        if(jsonPatient["name"].contains("Testo")){
+          jsonPatient["name"] = "Testo";
+          jsonPatient["surname"] = "Testowy";
+        }
+
         patientList.add(Patient.withId(jsonPatient["id"], jsonPatient["name"],
             jsonPatient["surname"], jsonPatient["telephoneNumber"]));
       }
+      patientIndex = patientList[0].id;
     }
+    setState(() {});
   }
 
   late List<Patient> patientList = [
@@ -148,9 +160,9 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(60, 0, 0, 0),
+                padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
                 child: Container(
-                  width: 290.0,
+                  width: 330.0,
                   height: 80.0,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
@@ -165,17 +177,22 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
                           width: 10,
                         ),
                         DropdownButton(
-                            value: patientList[0].id,
+                            value: patientIndex,
                             items: [
-                              for (var patient in patientList)
+                              for (int indx = 0;
+                                  indx < patientList.length;
+                                  indx++)
                                 DropdownMenuItem(
                                     child: Text(
-                                        "${patient.name} ${patient.surname}"),
-                                    value: patient.id)
+                                        "${patientList[indx].name} ${patientList[indx].surname}"),
+                                    value: indx)
                             ],
                             onChanged: (value) {
-                              getArchivedAppointments(
-                                  int.parse(value.toString()));
+                              if (value is int) {
+                                // getArchivedAppointments(patientList[value].id);
+                                patientIndex = value;
+                                setState(() {});
+                              }
                             }),
                       ],
                     ),
@@ -286,16 +303,5 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
         ),
       ),
     );
-  }
-
-  _determineStatusTextColor(String status) {
-    switch (status) {
-      case "success":
-        return Colors.green;
-      case "fail":
-        return Colors.red;
-      default:
-        return Colors.white;
-    }
   }
 }

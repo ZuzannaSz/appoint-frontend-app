@@ -137,7 +137,7 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
             Center(
               child: Container(
                   width: 300.0,
-                  height: MediaQuery.of(context).size.height * 0.39,
+                  height: MediaQuery.of(context).size.height * 0.55,
                   decoration: BoxDecoration(
                     boxShadow: const [
                       BoxShadow(

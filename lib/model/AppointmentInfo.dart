@@ -4,7 +4,7 @@ class ArchivedAppointment {
   late String patientName;
   late String patientSurname;
   late String date;
-
+  late int id;
   late String time;
   late String phoneNumber;
   late bool tookPlace;
@@ -21,6 +21,7 @@ class ArchivedAppointment {
       this.patientName, this.patientSurname, this.date, this.time);
 
   ArchivedAppointment.withDetailedInfo(
+      this.id,
       this.patientName,
       this.patientSurname,
       this.date,

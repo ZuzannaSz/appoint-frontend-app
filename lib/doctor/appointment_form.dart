@@ -1,7 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:appoint_webapp/doctor/list_of_appointments.dart';
 import 'package:appoint_webapp/model/AppointmentInfo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import '../model/Medicine.dart';
 import '../model/User.dart';
@@ -20,38 +24,92 @@ class AppointmentForm extends StatefulWidget {
 
 class _AppointmentFormState extends State<AppointmentForm> {
   late List<Medicine> medicineList = [
-    Medicine.withoutId(
-        doses: 0,
-        name: "lek",
-        remarks: "remarks",
-        prescriptionDate: "prescriptionDate",
-        schedule: "",
-        unit: ""),
-    Medicine.withoutId(
-        doses: 0,
-        name: "lek2",
-        remarks: "remarks",
-        prescriptionDate: "prescriptionDate",
-        schedule: "",
-        unit: "")
+    // Medicine.withoutId(
+    //     doses: 0,
+    //     name: "lek",
+    //     remarks: "remarks",
+    //     prescriptionDate: "prescriptionDate",
+    //     schedule: "",
+    //     unit: ""),
+    // Medicine.withoutId(
+    //     doses: 0,
+    //     name: "lek2",
+    //     remarks: "remarks",
+    //     prescriptionDate: "prescriptionDate",
+    //     schedule: "",
+    //     unit: "")
   ];
   late List<Medicine> chosenMedicineList = [];
   late List<TextEditingController> dosageList = [];
   late List<String> unitList = [];
   late List<String> scheduleList = [];
   late User user;
-
+  static const String SERVER_IP = 'https://pz-backend2022.herokuapp.com/api';
   final TextEditingController _visitRemarksController = TextEditingController();
 
   final TextEditingController _patientRemarksController =
-      TextEditingController();
+  TextEditingController();
 
   final TextEditingController _medicineNameController = TextEditingController();
 
   @override
   void initState() {
     user = widget.user;
+    getMedicineList();
     super.initState();
+  }
+  sendForm() async{
+    List medicineMapList = [];
+    Map medicineMap = {};
+    for(var med in medicineList){
+      if(med.id !=null)
+        medicineMap.putIfAbsent("id", () => med.id);
+      medicineMap.putIfAbsent("name", () => med.name);
+      medicineMap.putIfAbsent("dosage", () => med.doses);
+      medicineMap.putIfAbsent("timeUnit", () => med.unit);
+      medicineMap.putIfAbsent("remarks", () => med.remarks);
+      medicineMap.putIfAbsent("schedule", () => med.schedule);
+      medicineMapList.add(new Map.from(medicineMap));
+      medicineMap.clear();
+    }
+    var response = http.post(Uri.parse('$SERVER_IP/Appointment/Archive'),
+        headers: {
+          HttpHeaders.contentTypeHeader: "application/json; charset=utf-8"
+        },
+
+        body:  jsonEncode({
+          "id":widget.appointment.id,
+          "patientRemarks": _patientRemarksController.text,
+          "visitRemarks": _visitRemarksController.text,
+          "wasNecessary": widget.appointment.necessary,
+          "wasPrescriptionIssued": widget.appointment.receiptGiven,
+          "medicine":medicineMapList
+        }));
+
+  }
+  getMedicineList() async {
+    var res = await http.get(Uri.parse("$SERVER_IP/Drug/GetAll"),
+        headers: {HttpHeaders.authorizationHeader: "Bearer " + user.token});
+    print("getting appointment list");
+    print(res.body);
+    if (res.statusCode != 200) {
+      print("Drug/GetAll");
+      print(res.statusCode);
+      print(res.reasonPhrase);
+    } else {
+      List jsonList = jsonDecode(res.body);
+      for (var med in jsonList) {
+        medicineList.add(Medicine.full(
+            id: med["id"],
+            doses: 0,
+            name: med["name"],
+            remarks: "",
+            prescriptionDate: "",
+            schedule: "a day",
+            unit: "ml"));
+      }
+      setState(() {});
+    }
   }
 
   @override
@@ -88,7 +146,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              AppointmentArchives(user:user)));
+                              AppointmentArchives(user: user)));
                   break;
               }
             },
@@ -102,203 +160,213 @@ class _AppointmentFormState extends State<AppointmentForm> {
         ),
         body: Center(
             child: Container(
-          width: 300.0,
-          height: MediaQuery.of(context).size.height * 0.7,
-          decoration: BoxDecoration(
-            boxShadow: const [
-              BoxShadow(
-                  blurRadius: 8,
-                  offset: Offset(5, 5),
-                  color: Color.fromRGBO(127, 140, 141, 0.5),
-                  spreadRadius: 1)
-            ],
-            border: Border.all(color: const Color(0xFF5DB075), width: 2.0),
-            borderRadius: BorderRadius.circular(20.0),
-            color: Colors.white,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-            child: ListView(
-              children: [
-                const SizedBox(
-                  height: 30,
-                ),
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(0, 0, 60, 0),
-                  child: Text(
-                    "Appointment Form",
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
-                  ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Row(
+              width: 300.0,
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .height * 0.7,
+              decoration: BoxDecoration(
+                boxShadow: const [
+                  BoxShadow(
+                      blurRadius: 8,
+                      offset: Offset(5, 5),
+                      color: Color.fromRGBO(127, 140, 141, 0.5),
+                      spreadRadius: 1)
+                ],
+                border: Border.all(color: const Color(0xFF5DB075), width: 2.0),
+                borderRadius: BorderRadius.circular(20.0),
+                color: Colors.white,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+                child: ListView(
                   children: [
-                    const Text(
-                      "Name: ",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
                     const SizedBox(
-                      width: 30,
+                      height: 30,
                     ),
-                    Text(widget.appointment.patientName)
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  children: [
-                    const Text(
-                      "Surname: ",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(
-                      width: 30,
-                    ),
-                    Text(widget.appointment.patientSurname)
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  children: [
-                    const Text(
-                      "Phone Number: ",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(
-                      width: 30,
-                    ),
-                    Text(widget.appointment.phoneNumber),
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  children: [
-                    const Text(
-                      "Appointment date: ",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(
-                      width: 30,
-                    ),
-                    Text(widget.appointment.date)
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  children: [
-                    const Text(
-                      "Appointment time: ",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(
-                      width: 30,
-                    ),
-                    Text(widget.appointment.time)
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  children: [
-                    Text(
-                      "Was necessary?",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                    Checkbox(
-                        value: widget.appointment.necessary,
-                        onChanged: (bool? val) {
-                          setState(() {
-                            widget.appointment.necessary = val!;
-                          });
-                        })
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text(
-                      "Was prescription issued?",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                    Checkbox(
-                        value: widget.appointment.receiptGiven,
-                        onChanged: (bool? val) {
-                          setState(() {
-                            widget.appointment.receiptGiven = val!;
-                          });
-                        })
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Text(
-                  "Prescribed medicine",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-                _medicineTable(itemsCount),
-                const SizedBox(
-                  height: 30,
-                ),
-                const Text(
-                  "Visit remarks",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                _buildCommentSection(_visitRemarksController),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Text(
-                  "Patient remarks",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                _buildCommentSection(_patientRemarksController),
-                const SizedBox(height: 40),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 40, 20),
-                  child: ElevatedButton(
-                      onPressed: () {},
-                      child: const Text(
-                        "Send",
-                        style: TextStyle(fontSize: 16),
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(0, 0, 60, 0),
+                      child: Text(
+                        "Appointment Form",
+                        style: TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.w600),
                       ),
-                      style: ButtonStyle(
-                          fixedSize:
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      children: [
+                        const Text(
+                          "Name: ",
+                          style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(
+                          width: 30,
+                        ),
+                        Text(widget.appointment.patientName)
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        const Text(
+                          "Surname: ",
+                          style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(
+                          width: 30,
+                        ),
+                        Text(widget.appointment.patientSurname)
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        const Text(
+                          "Phone Number: ",
+                          style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(
+                          width: 30,
+                        ),
+                        Text(widget.appointment.phoneNumber),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        const Text(
+                          "Appointment date: ",
+                          style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(
+                          width: 30,
+                        ),
+                        Text(widget.appointment.date)
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        const Text(
+                          "Appointment time: ",
+                          style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(
+                          width: 30,
+                        ),
+                        Text(widget.appointment.time)
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Was necessary?",
+                          style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                        Checkbox(
+                            value: widget.appointment.necessary,
+                            onChanged: (bool? val) {
+                              setState(() {
+                                widget.appointment.necessary = val!;
+                              });
+                            })
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Was prescription issued?",
+                          style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                        Checkbox(
+                            value: widget.appointment.receiptGiven,
+                            onChanged: (bool? val) {
+                              setState(() {
+                                widget.appointment.receiptGiven = val!;
+                              });
+                            })
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Text(
+                      "Prescribed medicine",
+                      style: TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                    _medicineTable(itemsCount),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    const Text(
+                      "Visit remarks",
+                      style: TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    _buildCommentSection(_visitRemarksController),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Text(
+                      "Patient remarks",
+                      style: TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    _buildCommentSection(_patientRemarksController),
+                    const SizedBox(height: 40),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 40, 20),
+                      child: ElevatedButton(
+                          onPressed: () {
+                            sendForm();
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text(
+                            "Send",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          style: ButtonStyle(
+                              fixedSize:
                               MaterialStateProperty.all(const Size(100, 50)),
-                          backgroundColor: MaterialStateProperty.all(
-                              const Color(0xFF5DB075)),
-                          shape:
+                              backgroundColor: MaterialStateProperty.all(
+                                  const Color(0xFF5DB075)),
+                              shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          )))),
+                                    borderRadius: BorderRadius.circular(20),
+                                  )))),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-        )));
+              ),
+            )));
   }
 
   _medicineTable(int itemCount) {
@@ -344,7 +412,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
             // isDense: true,                      // Added this
             // contentPadding: EdgeInsets.all(8),
             border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+            OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
           )),
     );
   }
@@ -353,7 +421,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
     return Material(
       child: Container(
           width: 300.0,
-          height: MediaQuery.of(context).size.height * 0.39,
+          height: MediaQuery
+              .of(context)
+              .size
+              .height * 0.39,
           decoration: BoxDecoration(
             boxShadow: const [
               BoxShadow(
@@ -431,14 +502,14 @@ class _AppointmentFormState extends State<AppointmentForm> {
                   child: ElevatedButton(
                     style: ButtonStyle(
                         fixedSize:
-                            MaterialStateProperty.all(const Size(110, 60)),
+                        MaterialStateProperty.all(const Size(110, 60)),
                         backgroundColor:
-                            MaterialStateProperty.all(const Color(0xFF5DB075)),
+                        MaterialStateProperty.all(const Color(0xFF5DB075)),
                         shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ))),
+                        MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ))),
                     child: Text(
                       "Next",
                       style: TextStyle(fontSize: 18),
@@ -468,7 +539,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
     return Material(
       child: Container(
           width: 300.0,
-          height: MediaQuery.of(context).size.height * 0.39,
+          height: MediaQuery
+              .of(context)
+              .size
+              .height * 0.39,
           decoration: BoxDecoration(
             boxShadow: const [
               BoxShadow(
@@ -540,14 +614,14 @@ class _AppointmentFormState extends State<AppointmentForm> {
                   child: ElevatedButton(
                     style: ButtonStyle(
                         fixedSize:
-                            MaterialStateProperty.all(const Size(110, 60)),
+                        MaterialStateProperty.all(const Size(110, 60)),
                         backgroundColor:
-                            MaterialStateProperty.all(const Color(0xFF5DB075)),
+                        MaterialStateProperty.all(const Color(0xFF5DB075)),
                         shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ))),
+                        MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ))),
                     child: const Text(
                       "Finish",
                       style: TextStyle(fontSize: 18),
@@ -560,7 +634,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
                         } on Exception {
                           showDialog(
                               context: context,
-                              builder: (context) => const AlertDialog(
+                              builder: (context) =>
+                              const AlertDialog(
                                   title: Text("Incorrect dosage input!"),
                                   content: Text(
                                       "Dosage inputs must be alphanumeric")));
@@ -594,9 +669,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                 if (medicineList.length > index) {
                   chosenMedicineList.add(medicineList.removeAt(index));
                   int itemCount =
-                      medicineList.length > chosenMedicineList.length
-                          ? medicineList.length
-                          : chosenMedicineList.length;
+                  medicineList.length > chosenMedicineList.length
+                      ? medicineList.length
+                      : chosenMedicineList.length;
                   print(itemCount);
                   setState(() {});
                   Navigator.of(context).pop();
@@ -613,10 +688,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
                 child: Center(
                   child: medicineList.length > index
                       ? Text(medicineList[index].name,
-                          style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.black))
+                      style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black))
                       : Text(""),
                 ),
               ),
@@ -628,9 +703,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                 if (chosenMedicineList.length > index) {
                   medicineList.add(chosenMedicineList.removeAt(index));
                   int itemCount =
-                      medicineList.length > chosenMedicineList.length
-                          ? medicineList.length
-                          : chosenMedicineList.length;
+                  medicineList.length > chosenMedicineList.length
+                      ? medicineList.length
+                      : chosenMedicineList.length;
                   print(itemCount);
                   setState(() {});
                   Navigator.of(context).pop();
@@ -647,10 +722,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
                 child: Center(
                   child: chosenMedicineList.length > index
                       ? Text(chosenMedicineList[index].name,
-                          style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.black))
+                      style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black))
                       : Text(""),
                 ),
               ),
@@ -670,7 +745,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
           onTap: () {
             showDialog(
                 context: context,
-                builder: (context) => SimpleDialog(
+                builder: (context) =>
+                    SimpleDialog(
                       title: Row(
                         children: [
                           SizedBox(width: 40),
@@ -706,7 +782,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
                             controller: _medicineNameController,
                           ),
                         ),
-
                         const SizedBox(
                           height: 40,
                         ),
@@ -714,7 +789,26 @@ class _AppointmentFormState extends State<AppointmentForm> {
                           padding: const EdgeInsets.fromLTRB(90, 0, 90, 0),
                           child: ElevatedButton(
                               onPressed: () {
+                                medicineList.add(Medicine.withoutId(
+                                    doses: 0,
+                                    name: _medicineNameController.text,
+                                    remarks: "",
+                                    prescriptionDate: "",
+                                    schedule: "a day",
+                                    unit: "ml"));
+                                setState(() {
+
+                                });
                                 Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                                int itemsCount = medicineList.length > chosenMedicineList.length
+                                    ? medicineList.length
+                                    : chosenMedicineList.length;
+                                showDialog(
+                                    builder: (BuildContext context) =>
+                                        _buildMedicineForm(itemsCount),
+                                    context: context);
+
                               },
                               style: ButtonStyle(
                                   fixedSize: MaterialStateProperty.all(
@@ -722,11 +816,14 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                   backgroundColor: MaterialStateProperty.all(
                                       const Color(0xFF5DB075)),
                                   shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
+                                      RoundedRectangleBorder>(
                                       RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ))),
-                              child: Text("Add",style: TextStyle(fontSize: 17),)),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ))),
+                              child: Text(
+                                "Add",
+                                style: TextStyle(fontSize: 17),
+                              )),
                         )
                       ],
                     ));
@@ -785,8 +882,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
               items: const [
                 DropdownMenuItem(child: Text("ml"), value: "ml"),
                 DropdownMenuItem(child: Text("l"), value: "l"),
-                DropdownMenuItem(child: Text("cm"), value: "cm"),
-                DropdownMenuItem(child: Text("dm"), value: "dm"),
+                DropdownMenuItem(child: Text("g"), value: "g"),
+                DropdownMenuItem(child: Text("kg"), value: "kg"),
               ],
               onChanged: (value) {
                 if (value is String) {

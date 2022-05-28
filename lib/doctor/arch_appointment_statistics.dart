@@ -25,6 +25,7 @@ class ArchAppointmentStatistics extends StatelessWidget {
           unit: "unit")
     ];
     appointment = ArchivedAppointment.withDetailedInfo(
+      1,
         "patientName",
         "patientSurname",
         "date",
