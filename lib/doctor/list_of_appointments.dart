@@ -47,20 +47,55 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
     initNotification();
   }
 
-  initNotification() async {
+  DateTime _toDateTime(appointment) {
+    return DateTime(
+        appointment["date"]["year"],
+        appointment["date"]["month"],
+        appointment["date"]["day"],
+        appointment["time"]["hour"],
+        appointment["time"]["hour"],
+        appointment["time"]["hour"]);
+  }
+
+  int _compareAppointments(appointmentOld, appointmentNew) {
+    DateTime newDate = _toDateTime(appointmentOld);
+    DateTime oldDate = _toDateTime(appointmentNew);
+    return newDate.isAfter(oldDate) ? 1 : -1;
+  }
+
+  int _findAppointmentIndex() {
     DateTime now = DateTime.now();
+    for (int i = 0; i < _dayOfAppointment.length; i++) {
+      if (now.isBefore(_toDateTime(_dayOfAppointment[i]))) {
+        if (i == 0) {
+          return i;
+        } else if (now.isAfter(_toDateTime(_dayOfAppointment[i - 1]))) {
+          return i;
+        }
+      }
+    }
+    return -1;
+  }
 
-    // _dayOfAppointment.sort((appointmentOld,appointmentNew){appointment["date"]})
+  initNotification() async {
+    if (_dayOfAppointment.isEmpty) return;
+
+    _dayOfAppointment.sort(_compareAppointments);
+    int index = _findAppointmentIndex();
+    if(index == -1){
+      print("Error with findAppointmentIndex no appointment found");
+      return;
+    }
     String appointmentDate =
-        DateTime(now.year, now.month, now.day, now.hour, now.minute + 3)
-            .toIso8601String();
-
+        _toDateTime(_dayOfAppointment[index]).toIso8601String();
     DateTime parsedDate = DateTime.parse(appointmentDate);
     NotificationAppLaunchDetails? details =
         await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
     print(details?.didNotificationLaunchApp);
-    String date = _dayOfAppointment[0]["date"];
-    String time = _dayOfAppointment[0]["time"];
+    String date =
+        "${_dayOfAppointment[0]["date"]["year"]}-${_dayOfAppointment[0]["date"]["month"]}-${_dayOfAppointment[0]["date"]["day"]}";
+    String time =
+        "${_dayOfAppointment[0]["time"]["hour"]}:${_dayOfAppointment[0]["time"]["minute"]}-${_dayOfAppointment[0]["time"]["second"]}";
     NewAppointment appointment = NewAppointment(
         patientName: _dayOfAppointment[0]["patientName"],
         patientSurname: _dayOfAppointment[0]["patientSurname"],
@@ -75,17 +110,17 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
         id: 0,
         title: "Appointment started",
         body: "Your appointment on $date at $time has started!",
-        payload: "${appointment.patientName}/${appointment.patientSurname}/${appointment.phoneNumber}/${appointment.date}/${appointment.time}/${user.username}/${user.token}/${user.refreshToken}",
+        payload:
+            "${appointment.patientName}/${appointment.patientSurname}/${appointment.phoneNumber}/${appointment.date}/${appointment.time}/${user.username}/${user.token}/${user.refreshToken}",
         delay: ScheduledNotification.countDelayInMinutes(appointmentDate));
     startNotification.scheduleNotification();
     details =
         await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
     print(details?.didNotificationLaunchApp);
-
   }
 
   initAppointmentList() async {
-    // await _getAppointmentList();
+    await _getAppointmentList();
     _dayOfAppointment = _appointmentList.getDay(DateTime.now().weekday);
     setState(() {});
   }
@@ -344,10 +379,10 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                                           phoneNumber:
                                               _dayOfAppointment[index2 - 1]
                                                   ["telephoneNumber"],
-                                          date: _dayOfAppointment[index2 - 1]
-                                              ["date"],
-                                          time: _dayOfAppointment[index2 - 1]
-                                              ["time"],
+                                          date:
+                                              "${_dayOfAppointment[index2 - 1]["date"]["year"]}-${_dayOfAppointment[index2 - 1]["date"]["month"]}-${_dayOfAppointment[index2 - 1]["date"]["day"]}",
+                                          time:
+                                              "${_dayOfAppointment[index2 - 1]["time"]["hour"]}:${_dayOfAppointment[index2 - 1]["time"]["minute"]}-${_dayOfAppointment[index2 - 1]["time"]["second"]}",
                                           length: _dayOfAppointment[index2 - 1]
                                               ["length"],
                                           roomNumber:
@@ -356,7 +391,8 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                                           roomSpecialization:
                                               _dayOfAppointment[index2 - 1]
                                                   ["roomSpecialization"],
-                                          id: _dayOfAppointment[index2 - 1]["id"]);
+                                          id: _dayOfAppointment[index2 - 1]
+                                              ["id"]);
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(

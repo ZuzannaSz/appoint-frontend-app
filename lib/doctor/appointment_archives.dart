@@ -189,7 +189,8 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
                             ],
                             onChanged: (value) {
                               if (value is int) {
-                                // getArchivedAppointments(patientList[value].id);
+                                archivedAppointments.clear();
+                                getArchivedAppointments(patientList[value].id);
                                 patientIndex = value;
                                 setState(() {});
                               }
