@@ -43,26 +43,10 @@ class _SignInFormState extends State<SignInForm> {
   final _emailTextController = TextEditingController();
   final _passwordTextController = TextEditingController();
 
-  double _formProgress = 0;
-
   static const SERVER_IP = 'https://pz-backend2022.herokuapp.com';
 
-  void _updateFormProgress() {
-    var progress = 0.0;
-    var controllers = [_passwordTextController, _emailTextController];
 
-    for (var controller in controllers) {
-      if (controller.value.text.isNotEmpty) {
-        progress += 1 / controllers.length;
-      }
-    }
-
-    setState(() {
-      _formProgress = progress;
-    });
-  }
-
-  signIn() async {
+   signIn() async {
     // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
     var userEmail = _emailTextController.text;
@@ -71,7 +55,7 @@ class _SignInFormState extends State<SignInForm> {
     final tokens = json.decode(await attemptLogIn(userEmail, password));
     print(tokens.runtimeType.toString());
     print("User logged in succesfully");
-    if (tokens != null) {
+    if (tokens["errorCode"] == null) {
       print("user token: $tokens");
       user.token = tokens['token'];
       user.refreshToken = tokens['refreshToken'];
@@ -84,9 +68,9 @@ class _SignInFormState extends State<SignInForm> {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => ListOfAppointments(user: user,)));
       }
-
     } else {
-      displayDialog(context, "Błąd", "Email lub Hasło nie jest poprawne");
+      displayDialog(context, "Incorrect Input", "Please make sure you wrote the correct username and password and try again");
+
     }
   }
   String _decodeBase64(String str) {
