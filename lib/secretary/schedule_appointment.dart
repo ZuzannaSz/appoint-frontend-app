@@ -24,7 +24,8 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
   int chosenRecord = 9999;
   static const String SERVER_IP = 'https://pz-backend2022.herokuapp.com/api';
   late User user;
-  late List<Patient> _patientList;
+  late List<Patient> _patientList = [];
+  late List<Patient> _displayPatientList = [];
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   @override
@@ -53,6 +54,7 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
         _patientList.add(Patient(
             record["name"], record["surname"], record["telephoneNumber"]));
       }
+      _displayPatientList = _patientList;
       setState(() {});
       // for (var member in jsonResponse["board"]["members"]) {
       //   if (member["email"] == user.email) user.name = member["name"];
@@ -152,12 +154,12 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
                   ),
                   margin: const EdgeInsets.all(16.0),
                   child: ListView.builder(
-                      itemCount: _patientList.length + 1,
+                      itemCount: _displayPatientList.length + 1,
                       itemBuilder: (context, index) {
-                        if (index < _patientList.length) {
+                        if (index < _displayPatientList.length) {
                           return _buildRecord(
-                              "${_patientList[index].name} ${_patientList[index].surname}",
-                              _patientList[index].telephoneNumber,
+                              "${_displayPatientList[index].name} ${_displayPatientList[index].surname}",
+                              _displayPatientList[index].telephoneNumber,
                               index);
                         } else {
                           return _buildAddPatient(context, index);
@@ -289,6 +291,13 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
 
   _buildTextField(String hintText) {
     return TextField(
+      onChanged: (input){
+        print(_patientList.map((e) => e.name).toList());
+        _displayPatientList = _patientList.where((value) => value.name.contains(input) ||
+            value.surname.contains(input)).toList();
+
+        print(_displayPatientList[0].name);
+      },
         decoration: InputDecoration(
       contentPadding: const EdgeInsets.symmetric(vertical: 10),
       prefixIcon: const Icon(Icons.search),

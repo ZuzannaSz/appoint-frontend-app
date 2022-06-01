@@ -28,7 +28,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
   final String SERVER_IP = 'https://pz-backend2022.herokuapp.com/api';
   late final AppointmentList _appointmentList = AppointmentList();
   late List _dayOfAppointment = _appointmentList.getDay(DateTime.now().weekday);
-
+  late List _displayDayOfAppointment;
   final List<String> _columnList = [
     "patientName",
     "patientSurname",
@@ -82,7 +82,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
 
     _dayOfAppointment.sort(_compareAppointments);
     int index = _findAppointmentIndex();
-    if(index == -1){
+    if (index == -1) {
       print("Error with findAppointmentIndex no appointment found");
       return;
     }
@@ -122,6 +122,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
   initAppointmentList() async {
     await _getAppointmentList();
     _dayOfAppointment = _appointmentList.getDay(DateTime.now().weekday);
+    _displayDayOfAppointment = _dayOfAppointment;
     setState(() {});
   }
 
@@ -195,35 +196,27 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         const SizedBox(
-          height: 40,
+          height: 50,
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
           child: SizedBox(
             width: 200,
             child: TextField(
+                onChanged: (input) {
+                  _displayDayOfAppointment = _dayOfAppointment
+                      .where((value) =>
+                          value["patientName"].toString().contains(input) ||
+                          value["patientSurname"].toString().contains(input))
+                      .toList();
+                },
                 decoration: InputDecoration(
-              contentPadding: const EdgeInsets.symmetric(vertical: 10),
-              prefixIcon: const Icon(Icons.calendar_today),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-              hintText: 'dd/mm/yyyy',
-            )),
-          ),
-        ),
-        const SizedBox(height: 20),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
-          child: SizedBox(
-            width: 200,
-            child: TextField(
-                decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(vertical: 10),
-              prefixIcon: Icon(Icons.search),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-              hintText: 'name/surname',
-            )),
+                  contentPadding: EdgeInsets.symmetric(vertical: 10),
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0)),
+                  hintText: 'name/surname',
+                )),
           ),
         ),
         const SizedBox(height: 30),
@@ -249,22 +242,27 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                       switch (index) {
                         case 0:
                           _dayOfAppointment = _appointmentList.getMonday();
+                          _displayDayOfAppointment = _dayOfAppointment;
                           setState(() {});
                           break;
                         case 1:
                           _dayOfAppointment = _appointmentList.getTuesday();
+                          _displayDayOfAppointment = _dayOfAppointment;
                           setState(() {});
                           break;
                         case 2:
                           _dayOfAppointment = _appointmentList.getWednesday();
+                          _displayDayOfAppointment = _dayOfAppointment;
                           setState(() {});
                           break;
                         case 3:
                           _dayOfAppointment = _appointmentList.getThursday();
+                          _displayDayOfAppointment = _dayOfAppointment;
                           setState(() {});
                           break;
                         case 4:
                           _dayOfAppointment = _appointmentList.getFriday();
+                          _displayDayOfAppointment = _dayOfAppointment;
                           setState(() {});
                           break;
                       }
@@ -288,7 +286,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
         Center(
           child: Container(
               width: 300.0,
-              height: MediaQuery.of(context).size.height * 0.4,
+              height: MediaQuery.of(context).size.height * 0.5,
               decoration: BoxDecoration(
                 boxShadow: const [
                   BoxShadow(
@@ -313,10 +311,10 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                       child: Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: SizedBox(
-                          width: 80.0,
+                          width: 100.0,
                           height: 200.0,
                           child: ListView.builder(
-                              itemCount: _dayOfAppointment.length + 1,
+                              itemCount: _displayDayOfAppointment.length + 1,
                               itemBuilder: (context, index2) {
                                 if (index2 == 0) {
                                   if (index1 == 0) {
@@ -370,28 +368,27 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                                   return InkWell(
                                     onTap: () {
                                       NewAppointment appointment = NewAppointment(
-                                          patientName:
-                                              _dayOfAppointment[index2 - 1]
-                                                  ["patientName"],
+                                          patientName: _displayDayOfAppointment[
+                                              index2 - 1]["patientName"],
                                           patientSurname:
-                                              _dayOfAppointment[index2 - 1]
+                                              _displayDayOfAppointment[index2 - 1]
                                                   ["patientSurname"],
                                           phoneNumber:
-                                              _dayOfAppointment[index2 - 1]
+                                              _displayDayOfAppointment[index2 - 1]
                                                   ["telephoneNumber"],
                                           date:
-                                              "${_dayOfAppointment[index2 - 1]["date"]["year"]}-${_dayOfAppointment[index2 - 1]["date"]["month"]}-${_dayOfAppointment[index2 - 1]["date"]["day"]}",
+                                              "${_displayDayOfAppointment[index2 - 1]["date"]["year"]}-${_dayOfAppointment[index2 - 1]["date"]["month"]}-${_dayOfAppointment[index2 - 1]["date"]["day"]}",
                                           time:
-                                              "${_dayOfAppointment[index2 - 1]["time"]["hour"]}:${_dayOfAppointment[index2 - 1]["time"]["minute"]}-${_dayOfAppointment[index2 - 1]["time"]["second"]}",
-                                          length: _dayOfAppointment[index2 - 1]
+                                              "${_displayDayOfAppointment[index2 - 1]["time"]["hour"]}:${_dayOfAppointment[index2 - 1]["time"]["minute"]}-${_dayOfAppointment[index2 - 1]["time"]["second"]}",
+                                          length: _displayDayOfAppointment[index2 - 1]
                                               ["length"],
                                           roomNumber:
-                                              _dayOfAppointment[index2 - 1]
+                                          _displayDayOfAppointment[index2 - 1]
                                                   ["roomNumber"],
                                           roomSpecialization:
-                                              _dayOfAppointment[index2 - 1]
+                                          _displayDayOfAppointment[index2 - 1]
                                                   ["roomSpecialization"],
-                                          id: _dayOfAppointment[index2 - 1]
+                                          id: _displayDayOfAppointment[index2 - 1]
                                               ["id"]);
                                       Navigator.push(
                                           context,
@@ -406,7 +403,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                                       child: SizedBox(
                                           height: 35,
                                           child: Text(
-                                              _dayOfAppointment[index2 - 1]
+                                              _displayDayOfAppointment[index2 - 1]
                                                   [_columnList[index1]])),
                                     ),
                                   );
