@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 
+import '../generated/l10n.dart';
 import '../main.dart';
 import '../model/AppointmentList.dart';
 import '../model/User.dart';
@@ -27,10 +28,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
   int day = 0;
   final String SERVER_IP = 'https://pz-backend2022.herokuapp.com/api';
   late final AppointmentList _appointmentList = AppointmentList();
-  late List _dayOfAppointment = _appointmentList.getDay(DateTime
-      .now()
-      .weekday);
-
+  late List _dayOfAppointment = _appointmentList.getDay(DateTime.now().weekday);
 
   final List<String> _columnList = [
     "patientName",
@@ -46,66 +44,54 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
     super.initState();
     user = widget.user;
     initAppointmentList();
-
+    // print(user.token);
     // initNotification();
-
   }
 
   initNotification() async {
     DateTime now = DateTime.now();
     // String appointmentDate = _dayOfAppointment[0]["Date"];
     String appointmentDate =
-    DateTime(now.year, now.month, now.day, now.hour, now.minute + 3)
-        .toIso8601String();
+        DateTime(now.year, now.month, now.day, now.hour, now.minute + 3)
+            .toIso8601String();
 
     DateTime parsedDate = DateTime.parse(appointmentDate);
     NotificationAppLaunchDetails? details =
-    await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+        await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
     print(details?.didNotificationLaunchApp);
-    String fullDate =
-    _dayOfAppointment[0]["date"];
-    String date = fullDate.substring(
-        0, fullDate.indexOf("T"));
-    String time = fullDate
-        .substring(fullDate.indexOf("T") + 1,
-        fullDate.indexOf("T") + 9);
+    String fullDate = _dayOfAppointment[0]["date"];
+    String date = fullDate.substring(0, fullDate.indexOf("T"));
+    String time = fullDate.substring(
+        fullDate.indexOf("T") + 1, fullDate.indexOf("T") + 9);
     NewAppointment appointment = NewAppointment(
-        patientName:
-        _dayOfAppointment[0]
-        ["patient"]["name"],
-        patientSurname:
-        _dayOfAppointment[0]
-        ["patient"]["surname"],
-        phoneNumber:
-        _dayOfAppointment[0]
-        ["patient"]["telephoneNumber"],
+        patientName: _dayOfAppointment[0]["patient"]["name"],
+        patientSurname: _dayOfAppointment[0]["patient"]["surname"],
+        phoneNumber: _dayOfAppointment[0]["patient"]["telephoneNumber"],
         date: date,
         time: time,
-        length: _dayOfAppointment[0]
-        ["length"],
-        roomNumber: _dayOfAppointment[0]
-        ["room"]["number"],
-        roomSpecialization: _dayOfAppointment[0]
-        ["room"]["specialization"],
+        length: _dayOfAppointment[0]["length"],
+        roomNumber: _dayOfAppointment[0]["room"]["number"],
+        roomSpecialization: _dayOfAppointment[0]["room"]["specialization"],
         id: _dayOfAppointment[0]["id"]);
     ScheduledNotification startNotification = ScheduledNotification(
         id: 0,
-        title: "Appointment started",
-        body:
-        "Your appointment on $date at $time has started!",
+        title: S.of(context).appointmentStarted,
+        body: S.of(context).yourAppointmentOn +
+            date +
+            S.of(context).at +
+            time +
+            S.of(context).hasStarted,
         payload: appointment.toString(),
         delay: ScheduledNotification.countDelayInMinutes(appointmentDate));
     startNotification.scheduleNotification();
     details =
-    await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+        await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
     print(details?.didNotificationLaunchApp);
   }
 
   initAppointmentList() async {
     // await _getAppointmentList();
-    _dayOfAppointment = _appointmentList.getDay(DateTime
-        .now()
-        .weekday);
+    _dayOfAppointment = _appointmentList.getDay(DateTime.now().weekday);
     setState(() {});
   }
 
@@ -121,7 +107,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
     );
     print("getting appointment list");
     print(res.statusCode);
-    // print(res.body);
+    print(res.body);
     if (res.statusCode != 200) {
       print("Error");
       return null;
@@ -130,8 +116,6 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
       print("app list response:\n$jsonResponse");
 
       _appointmentList.setAppointmentMap(jsonResponse);
-
-
     }
   }
 
@@ -139,15 +123,15 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Color(0xFF5DB075),
-          items: const <BottomNavigationBarItem>[
+          backgroundColor: Colors.teal,
+          items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.menu_book),
-              label: 'App. List',
+              icon: const Icon(Icons.menu_book),
+              label: S.of(context).appList,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.library_books),
-              label: 'App. History',
+              icon: const Icon(Icons.library_books),
+              label: S.of(context).appHistory,
             ),
           ],
           onTap: (option) {
@@ -163,10 +147,9 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
           },
           selectedItemColor: Colors.white),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF5DB075),
-        title: const Text(
-          "List Of Appointments",
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          S.of(context).listOfAppointments,
+          style: const TextStyle(color: Colors.white),
         ),
       ),
       backgroundColor: Colors.white,
@@ -183,42 +166,46 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
         const SizedBox(
           height: 40,
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
-          child: SizedBox(
-            width: 200,
-            child: TextField(
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                  prefixIcon: const Icon(Icons.calendar_today),
-                  border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-                  hintText: 'dd/mm/yyyy',
-                )),
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 200,
+              child: TextField(
+                  decoration: InputDecoration(
+                contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                prefixIcon: const Icon(Icons.calendar_today),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+                hintText: 'dd/mm/yyyy',
+              )),
+            ),
+          ],
         ),
         const SizedBox(height: 20),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
-          child: SizedBox(
-            width: 200,
-            child: TextField(
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 10),
-                  prefixIcon: Icon(Icons.search),
-                  border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-                  hintText: 'name/surname',
-                )),
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 200,
+              child: TextField(
+                  decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(vertical: 10),
+                prefixIcon: Icon(Icons.search),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+                hintText: S.of(context).namesurname,
+              )),
+            ),
+          ],
         ),
         const SizedBox(height: 30),
         Center(
           child: Container(
-            width: 300,
+            width: MediaQuery.of(context).size.width * 0.9,
             height: 37,
             decoration: BoxDecoration(
-              border: Border.all(color: Color(0xFF5DB075), width: 2.0),
+              border: Border.all(color: Colors.teal, width: 2.0),
               borderRadius: BorderRadius.circular(30.0),
               color: Colors.white,
             ),
@@ -228,7 +215,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
               itemBuilder: (context, index) {
                 return Container(
                   color: index % 2 == 1
-                      ? const Color.fromARGB(161, 93, 176, 117)
+                      ? const Color.fromARGB(119, 126, 219, 192)
                       : null,
                   child: InkWell(
                     onTap: () async {
@@ -273,20 +260,17 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
         ),
         Center(
           child: Container(
-              width: 300.0,
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .height * 0.4,
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: MediaQuery.of(context).size.height * 0.5,
               decoration: BoxDecoration(
                 boxShadow: const [
                   BoxShadow(
                       blurRadius: 8,
                       offset: Offset(5, 5),
-                      color: Color.fromRGBO(127, 140, 141, 0.5),
+                      color: Color.fromRGBO(87, 136, 141, 0.5019607843137255),
                       spreadRadius: 1)
                 ],
-                border: Border.all(color: Color(0xFF5DB075), width: 2.0),
+                border: Border.all(color:Colors.teal, width: 2.0),
                 borderRadius: BorderRadius.circular(20.0),
                 color: Colors.white,
               ),
@@ -297,7 +281,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                   itemBuilder: (context, index1) {
                     return Container(
                       color: index1 % 2 == 1
-                          ? const Color.fromARGB(161, 93, 176, 117)
+                          ? const Color.fromARGB(119, 126, 219, 192)
                           : null,
                       child: Padding(
                         padding: const EdgeInsets.all(15.0),
@@ -309,86 +293,87 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                               itemBuilder: (context, index2) {
                                 if (index2 == 0) {
                                   if (index1 == 0) {
-                                    return const Center(
+                                    return Center(
                                       child: SizedBox(
                                           height: 50,
                                           child: Text(
-                                            "Name",
-                                            style: TextStyle(
+                                            S.of(context).name,
+                                            style: const TextStyle(
                                                 fontWeight: FontWeight.bold),
                                           )),
                                     );
                                   } else if (index1 == 1) {
-                                    return const Center(
+                                    return Center(
                                       child: SizedBox(
                                           height: 50,
-                                          child: Text("Surname",
-                                              style: TextStyle(
+                                          child: Text(S.of(context).surname,
+                                              style: const TextStyle(
                                                   fontWeight:
-                                                  FontWeight.bold))),
+                                                      FontWeight.bold))),
                                     );
                                   } else if (index1 == 2) {
-                                    return const Center(
+                                    return Center(
                                       child: SizedBox(
                                           height: 50,
-                                          child: Text("Phone number",
-                                              style: TextStyle(
+                                          child: Text(S.of(context).phoneNumber,
+                                              style: const TextStyle(
                                                   fontWeight:
-                                                  FontWeight.bold))),
+                                                      FontWeight.bold))),
                                     );
                                   } else if (index1 == 3) {
-                                    return const Center(
+                                    return Center(
                                       child: SizedBox(
                                           height: 50,
-                                          child: Text("Date",
-                                              style: TextStyle(
+                                          child: Text(S.of(context).date,
+                                              style: const TextStyle(
                                                   fontWeight:
-                                                  FontWeight.bold))),
+                                                      FontWeight.bold))),
                                     );
                                   } else {
-                                    return const Center(
+                                    return Center(
                                       child: SizedBox(
                                           height: 50,
-                                          child: Text("Time",
-                                              style: TextStyle(
+                                          child: Text(S.of(context).time,
+                                              style: const TextStyle(
                                                   fontWeight:
-                                                  FontWeight.bold))),
+                                                      FontWeight.bold))),
                                     );
                                   }
                                 } else {
                                   return InkWell(
                                     onTap: () {
-                                      NewAppointment appointment =
-                                      NewAppointment(
+                                      NewAppointment appointment = NewAppointment(
                                           patientName:
-                                          _dayOfAppointment[index2 - 1]
-                                          ["patientName"],
+                                              _dayOfAppointment[index2 - 1]
+                                                  ["patientName"],
                                           patientSurname:
-                                          _dayOfAppointment[index2 - 1]
-                                          ["patientSurname"],
+                                              _dayOfAppointment[index2 - 1]
+                                                  ["patientSurname"],
                                           phoneNumber:
-                                          _dayOfAppointment[index2 - 1]
-                                          ["telephoneNumber"],
+                                              _dayOfAppointment[index2 - 1]
+                                                  ["telephoneNumber"],
                                           date: _dayOfAppointment[index2 - 1]
-                                          ["date"],
+                                              ["date"],
                                           time: _dayOfAppointment[index2 - 1]
-                                          ["time"],
+                                              ["time"],
                                           length: _dayOfAppointment[index2 - 1]
-                                          ["length"],
-                                          roomNumber: _dayOfAppointment[index2 - 1]
-                                          ["roomNumber"],
-                                          roomSpecialization: _dayOfAppointment[index2 - 1]
-                                          ["roomSpecialization"],
+                                              ["length"],
+                                          roomNumber:
+                                              _dayOfAppointment[index2 - 1]
+                                                  ["roomNumber"],
+                                          roomSpecialization:
+                                              _dayOfAppointment[index2 - 1]
+                                                  ["roomSpecialization"],
                                           id: _dayOfAppointment[index2 - 1]["id"]);
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
                                                 AppointmentStatistics(
-                                                  appointment: appointment,
-                                                  user: user,
-                                                  archived: false,
-                                                ),
+                                              appointment: appointment,
+                                              user: user,
+                                              archived: false,
+                                            ),
                                           ));
                                     },
                                     child: Center(
@@ -396,7 +381,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                                           height: 35,
                                           child: Text(
                                               _dayOfAppointment[index2 - 1]
-                                              [_columnList[index1]])),
+                                                  [_columnList[index1]])),
                                     ),
                                   );
                                 }
@@ -413,10 +398,10 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
   _buildTextField(String hintText) {
     return TextField(
         decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(vertical: 10),
-          prefixIcon: const Icon(Icons.search),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-          hintText: hintText,
-        ));
+      contentPadding: const EdgeInsets.symmetric(vertical: 10),
+      prefixIcon: const Icon(Icons.search),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+      hintText: hintText,
+    ));
   }
 }

@@ -3,6 +3,7 @@ import 'package:appoint_webapp/model/AppointmentInfo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../generated/l10n.dart';
 import '../model/Patient.dart';
 import '../model/User.dart';
 import 'appointment_archives.dart';
@@ -12,22 +13,27 @@ class AppointmentStatistics extends StatelessWidget {
   late User user;
   late NewAppointment appointment;
   late bool archived;
-  AppointmentStatistics({Key? key, required this.appointment, required this.user,required this.archived})
+
+  AppointmentStatistics(
+      {Key? key,
+      required this.appointment,
+      required this.user,
+      required this.archived})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: const Color(0xFF5DB075),
-          items: const <BottomNavigationBarItem>[
+          backgroundColor: Colors.teal,
+          items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.menu_book),
-              label: 'App. List',
+              label: S.of(context).appList,
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.library_books),
-              label: 'App. History',
+              label: S.of(context).appHistory,
             ),
           ],
           onTap: (option) {
@@ -50,10 +56,9 @@ class AppointmentStatistics extends StatelessWidget {
           },
           selectedItemColor: Colors.white),
       appBar: AppBar(
-        backgroundColor: Color(0xFF5DB075),
-        title: const Text(
-          "Patient Statistics",
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          S.of(context).patientStatistics,
+          style: const TextStyle(color: Colors.white),
         ),
       ),
       body: Center(
@@ -73,10 +78,10 @@ class AppointmentStatistics extends StatelessWidget {
       const SizedBox(
         height: 40,
       ),
-      const Text(
-        "General Information",
-        style: TextStyle(
-            color: Color(0xFF5DB075),
+      Text(
+        S.of(context).generalInformation,
+        style: const TextStyle(
+            color: Colors.teal,
             fontSize: 24,
             fontWeight: FontWeight.bold),
       ),
@@ -85,9 +90,9 @@ class AppointmentStatistics extends StatelessWidget {
       ),
       Row(
         children: [
-          const Text(
-            "Name: ",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          Text(
+            S.of(context).nameForm,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           Text(appointment.patientName, style: const TextStyle(fontSize: 17)),
         ],
@@ -97,11 +102,12 @@ class AppointmentStatistics extends StatelessWidget {
       ),
       Row(
         children: [
-          const Text(
-            "Surname: ",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          Text(
+            S.of(context).surnameForm,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
-          Text(appointment.patientSurname, style: TextStyle(fontSize: 17)),
+          Text(appointment.patientSurname,
+              style: const TextStyle(fontSize: 17)),
         ],
       ),
       const SizedBox(
@@ -109,9 +115,9 @@ class AppointmentStatistics extends StatelessWidget {
       ),
       Row(
         children: [
-          const Text(
-            "PESEL: ",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          Text(
+            S.of(context).pesel,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           Text("98040705050", style: TextStyle(fontSize: 17)),
         ],
@@ -121,73 +127,84 @@ class AppointmentStatistics extends StatelessWidget {
       ),
       Row(
         children: [
-          const Text(
-            "Phone number: ",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-          ),
-          Text(appointment.phoneNumber, style: TextStyle(fontSize: 17)),
-        ],
-      ),
-      const SizedBox(
-        height: 20,
-      ),
-      Row(
-        children:  [
-          const Text(
-            "Visit date: ",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-          ),
-          Text(appointment.date, style: TextStyle(fontSize: 17)),
-        ],
-      ),
-      const SizedBox(
-        height: 20,
-      ),
-      Row(
-        children:  [
-          const Text(
-            "Visit time: ",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-          ),
-          Text(appointment.time, style: TextStyle(fontSize: 17)),
-        ],
-      ),
-      const SizedBox(
-        height: 20,
-      ),
-      Row(
-        children: const [
           Text(
-            "Is urgent?: ",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+            S.of(context).phoneNumberForm,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
-          Text("No", style: TextStyle(fontSize: 17)),
+          Text(appointment.phoneNumber, style: const TextStyle(fontSize: 17)),
+        ],
+      ),
+      const SizedBox(
+        height: 20,
+      ),
+      Row(
+        children: [
+          Text(
+            S.of(context).visitDate,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          ),
+          Text(appointment.date, style: const TextStyle(fontSize: 17)),
+        ],
+      ),
+      const SizedBox(
+        height: 20,
+      ),
+      Row(
+        children: [
+          Text(
+            S.of(context).visitTime,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          ),
+          Text(appointment.time, style: const TextStyle(fontSize: 17)),
+        ],
+      ),
+      const SizedBox(
+        height: 20,
+      ),
+      Row(
+        children: [
+          Text(
+            S.of(context).isUrgent,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          ),
+          Text(S.of(context).no, style: const TextStyle(fontSize: 17)),
         ],
       ),
       const SizedBox(
         height: 60,
       ),
-      !archived?Padding(
-        padding: const EdgeInsets.fromLTRB(0, 0, 60, 0),
-        child: ElevatedButton(
-            onPressed: () {
-
-              Navigator.of(context).pop();
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AppointmentForm(user: user, appointment: ArchivedAppointment.fromNewAppointment(appointment),)));
-            },
-            child: const Text("App. Form", style: TextStyle(fontSize: 18),),
-            style: ButtonStyle(
-                fixedSize: MaterialStateProperty.all(const Size(60, 60)),
-                backgroundColor:
-                    MaterialStateProperty.all(const Color(0xFF5DB075)),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                )))),
-      ):Padding(padding: EdgeInsets.all(0),),
+      !archived
+          ? Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 60, 0),
+              child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AppointmentForm(
+                                  user: user,
+                                  appointment:
+                                      ArchivedAppointment.fromNewAppointment(
+                                          appointment),
+                                )));
+                  },
+                  child: Text(
+                    S.of(context).appForm,
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  style: ButtonStyle(
+                      fixedSize: MaterialStateProperty.all(const Size(60, 60)),
+                      backgroundColor:
+                          MaterialStateProperty.all(Colors.teal),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      )))),
+            )
+          : Padding(
+              padding: EdgeInsets.all(0),
+            ),
       const SizedBox(
         height: 80,
       ),

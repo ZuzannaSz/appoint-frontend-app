@@ -3,6 +3,7 @@ import 'package:appoint_webapp/model/AppointmentInfo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../generated/l10n.dart';
 import '../model/Patient.dart';
 import '../model/User.dart';
 import 'appointment_archives.dart';
@@ -19,15 +20,15 @@ class ArchAppointmentStatistics extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: const Color(0xFF5DB075),
-          items: const <BottomNavigationBarItem>[
+          backgroundColor: Colors.teal,
+          items:  <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.menu_book),
-              label: 'App. List',
+              icon: const Icon(Icons.menu_book),
+              label: S.of(context).appList,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.library_books),
-              label: 'App. History',
+              icon: const Icon(Icons.library_books),
+              label: S.of(context).appHistory,
             ),
           ],
           onTap: (option) {
@@ -50,10 +51,10 @@ class ArchAppointmentStatistics extends StatelessWidget {
           },
           selectedItemColor: Colors.white),
       appBar: AppBar(
-        backgroundColor: Color(0xFF5DB075),
-        title: const Text(
-          "Patient Statistics",
-          style: TextStyle(color: Colors.white),
+        backgroundColor:Colors.teal,
+        title:  Text(
+          S.of(context).patientStatistics,
+          style: const TextStyle(color: Colors.white),
         ),
       ),
       body: Center(
@@ -73,10 +74,10 @@ class ArchAppointmentStatistics extends StatelessWidget {
       const SizedBox(
         height: 40,
       ),
-      const Text(
-        "General Information",
-        style: TextStyle(
-            color: Color(0xFF5DB075),
+       Text(
+        S.of(context).generalInformation,
+        style: const TextStyle(
+            color: Colors.teal,
             fontSize: 24,
             fontWeight: FontWeight.bold),
       ),
@@ -85,9 +86,9 @@ class ArchAppointmentStatistics extends StatelessWidget {
       ),
       Row(
         children: [
-          const Text(
-            "Name: ",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+           Text(
+            S.of(context).nameForm,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           Text(appointment.patientName, style: const TextStyle(fontSize: 17)),
         ],
@@ -97,9 +98,9 @@ class ArchAppointmentStatistics extends StatelessWidget {
       ),
       Row(
         children: [
-          const Text(
-            "Surname: ",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+           Text(
+            S.of(context).surnameForm,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           Text(appointment.patientSurname, style: TextStyle(fontSize: 17)),
         ],
@@ -109,9 +110,9 @@ class ArchAppointmentStatistics extends StatelessWidget {
       ),
       Row(
         children: [
-          const Text(
-            "PESEL: ",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+           Text(
+            S.of(context).pesel,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           Text("98040705050", style: TextStyle(fontSize: 17)),
         ],
@@ -121,9 +122,9 @@ class ArchAppointmentStatistics extends StatelessWidget {
       ),
       Row(
         children: [
-          const Text(
-            "Phone number: ",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+           Text(
+            S.of(context).phoneNumberForm,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           Text(appointment.phoneNumber, style: TextStyle(fontSize: 17)),
         ],
@@ -133,9 +134,9 @@ class ArchAppointmentStatistics extends StatelessWidget {
       ),
       Row(
         children:  [
-          const Text(
-            "Visit date: ",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+           Text(
+            S.of(context).visitDate,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           Text(appointment.date, style: TextStyle(fontSize: 17)),
         ],
@@ -145,9 +146,9 @@ class ArchAppointmentStatistics extends StatelessWidget {
       ),
       Row(
         children:  [
-          const Text(
-            "Visit time: ",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+           Text(
+            S.of(context).visitTime,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           Text(appointment.time, style: TextStyle(fontSize: 17)),
         ],
@@ -156,12 +157,12 @@ class ArchAppointmentStatistics extends StatelessWidget {
         height: 20,
       ),
       Row(
-        children: const [
+        children:  [
           Text(
-            "Is urgent?: ",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+            S.of(context).isUrgent,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
-          Text("No", style: TextStyle(fontSize: 17)),
+          Text(S.of(context).no, style: const TextStyle(fontSize: 17)),
         ],
       ),
       const SizedBox(
@@ -178,11 +179,11 @@ class ArchAppointmentStatistics extends StatelessWidget {
               //     MaterialPageRoute(
               //         builder: (context) => AppointmentForm(user: user, appointment: ArchivedAppointment.fromNewAppointment(appointment),)));
             },
-            child: const Text("App. Form", style: TextStyle(fontSize: 18),),
+            child:  Text(S.of(context).appForm, style: const TextStyle(fontSize: 18),),
             style: ButtonStyle(
                 fixedSize: MaterialStateProperty.all(const Size(60, 60)),
                 backgroundColor:
-                MaterialStateProperty.all(const Color(0xFF5DB075)),
+                MaterialStateProperty.all(Colors.teal),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),

@@ -3,12 +3,14 @@ import 'package:appoint_webapp/login_page.dart';
 import 'package:appoint_webapp/secretary/schedule_appointment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 import 'doctor/list_of_appointments.dart';
+import 'generated/l10n.dart';
 import 'model/AppointmentInfo.dart';
 
 String? selectedNotificationPayload;
@@ -60,10 +62,23 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     _initNotifications(context);
     return MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Appoint',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: Colors.teal,
         ),
+        localizationsDelegates: const [
+          // ... app-specific localization delegate[s] here
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+
+        supportedLocales: const [
+          Locale('en', ''),
+          Locale('pl','')// English
+          // ... other locales the app supports
+        ],
         home: LoginPage());
   }
 }
