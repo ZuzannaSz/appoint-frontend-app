@@ -43,7 +43,6 @@ class _CancelAppointment extends State<CancelAppointment> {
     user = widget.user;
     patientName.text = widget.patientName;
     patientId = widget.patientId;
-    // _initSpecialities();
     _initAppointments();
     super.initState();
   }
@@ -238,10 +237,7 @@ class _CancelAppointment extends State<CancelAppointment> {
                             children: [
                               Text(
                                 S.of(context).room +
-                                    appointments[index].roomName +
-                                    "\n" +
-                                    S.of(context).roomSpecialisation +
-                                    appointments[index].roomSpecialisation,
+                                    appointments[index].roomName,
                                 style: biggerFont,
                               ),
                             ],

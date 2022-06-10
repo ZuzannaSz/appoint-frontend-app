@@ -153,6 +153,11 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
               content: Text(S.of(context).errorSavingVisit),
               duration: Duration(seconds: 1),
             ))));
+      _dateController.text="";
+      _timeController.text="";
+      patientName.text="";
+      doctorName.text="";
+      doctorId=-1;
     }
 
     return Scaffold(
