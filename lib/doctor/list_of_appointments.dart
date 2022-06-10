@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 import '../main.dart';
 import '../model/AppointmentList.dart';
 import '../model/User.dart';
+import 'accumulated_statistics.dart';
 
 class ListOfAppointments extends StatefulWidget {
   late User user;
@@ -28,7 +29,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
   final String SERVER_IP = 'https://pz-backend2022.herokuapp.com/api';
   late final AppointmentList _appointmentList = AppointmentList();
   late List _dayOfAppointment = _appointmentList.getDay(DateTime.now().weekday);
-  late List _displayDayOfAppointment;
+  late List _displayDayOfAppointment = [];
   final List<String> _columnList = [
     "patientName",
     "patientSurname",
@@ -48,13 +49,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
   }
 
   DateTime _toDateTime(appointment) {
-    return DateTime(
-        appointment["date"]["year"],
-        appointment["date"]["month"],
-        appointment["date"]["day"],
-        appointment["time"]["hour"],
-        appointment["time"]["hour"],
-        appointment["time"]["hour"]);
+    return DateTime.parse("${appointment["date"]} ${appointment["time"]}");
   }
 
   int _compareAppointments(appointmentOld, appointmentNew) {
@@ -93,9 +88,9 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
         await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
     print(details?.didNotificationLaunchApp);
     String date =
-        "${_dayOfAppointment[0]["date"]["year"]}-${_dayOfAppointment[0]["date"]["month"]}-${_dayOfAppointment[0]["date"]["day"]}";
+        "${_dayOfAppointment[0]["date"]}";
     String time =
-        "${_dayOfAppointment[0]["time"]["hour"]}:${_dayOfAppointment[0]["time"]["minute"]}-${_dayOfAppointment[0]["time"]["second"]}";
+        "${_dayOfAppointment[0]["time"]}";
     NewAppointment appointment = NewAppointment(
         patientName: _dayOfAppointment[0]["patientName"],
         patientSurname: _dayOfAppointment[0]["patientSurname"],
@@ -161,6 +156,10 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
               label: 'App. List',
             ),
             BottomNavigationBarItem(
+              icon: Icon(Icons.bar_chart),
+              label: 'Statistics',
+            ),
+            BottomNavigationBarItem(
               icon: Icon(Icons.library_books),
               label: 'App. History',
             ),
@@ -168,6 +167,13 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
           onTap: (option) {
             switch (option) {
               case 1:
+                Navigator.of(context).pop();
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AccumulatedStatistics(user: user)));
+                break;
+              case 2:
                 Navigator.of(context).pop();
                 Navigator.push(
                     context,
@@ -377,9 +383,9 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                                               _displayDayOfAppointment[index2 - 1]
                                                   ["telephoneNumber"],
                                           date:
-                                              "${_displayDayOfAppointment[index2 - 1]["date"]["year"]}-${_dayOfAppointment[index2 - 1]["date"]["month"]}-${_dayOfAppointment[index2 - 1]["date"]["day"]}",
+                                              "${_displayDayOfAppointment[index2 - 1]["date"]}",
                                           time:
-                                              "${_displayDayOfAppointment[index2 - 1]["time"]["hour"]}:${_dayOfAppointment[index2 - 1]["time"]["minute"]}-${_dayOfAppointment[index2 - 1]["time"]["second"]}",
+                                              "${_displayDayOfAppointment[index2 - 1]["time"]}",
                                           length: _displayDayOfAppointment[index2 - 1]
                                               ["length"],
                                           roomNumber:

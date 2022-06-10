@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:appoint_webapp/doctor/accumulated_statistics.dart';
 import 'package:appoint_webapp/model/AppointmentInfo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,7 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
       archivedAppointments.clear();
       List jsonMap = await jsonDecode(res.body);
       print(jsonMap);
+
       for (var appointment in jsonMap) {
         List<Medicine> medicineList = [];
         for (var medicine in appointment["medicine"]) {
@@ -51,27 +53,28 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
               name: medicine["name"],
               remarks: medicine["remarks"],
               prescriptionDate:
-                  "${medicine["prescriptionDate"][""]} ${medicine["prescriptionDate"]} ${medicine["prescriptionDate"]}",
+                  "${medicine["prescriptionDate"]} ${medicine["prescriptionTime"]}",
               schedule: medicine["schedule"],
               unit: medicine["timeUnit"]));
         }
 
         archivedAppointments.add(ArchivedAppointment.withDetailedInfo(
-            appointment["id"],
+            0,
             appointment["patientName"],
             appointment["patientSurname"],
-            "${appointment["date"]["year"]}-${appointment["date"]["month"]}-${appointment["date"]["day"]}",
+            "${appointment["date"]}",
             appointment["length"],
             appointment["wasNecessary"],
             appointment["patientRemarks"][0]["remarks"],
             appointment["wasPrescriptionIssued"],
             appointment["tookPlace"],
             appointment["visitRemarks"],
-            "${appointment["time"]["hour"]}:${appointment["time"]["minute"]}:${appointment["time"]["second"]}",
+            "${appointment["time"]}",
             appointment["roomNumber"],
             medicineList));
       }
     }
+    setState(() {});
   }
 
   late User user;
@@ -99,7 +102,7 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
       List jsonMap = await jsonDecode(res.body);
       print(jsonMap);
       for (var jsonPatient in jsonMap) {
-        if(jsonPatient["name"].contains("Testo")){
+        if (jsonPatient["name"].contains("Testo")) {
           jsonPatient["name"] = "Testo";
           jsonPatient["surname"] = "Testowy";
         }
@@ -120,12 +123,16 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
-          currentIndex: 1,
+          currentIndex: 2,
           backgroundColor: const Color(0xFF5DB075),
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.menu_book),
               label: 'App. List',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.bar_chart),
+              label: 'Statistics',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.library_books),
@@ -140,6 +147,14 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => ListOfAppointments(user: user)));
+                break;
+              case 1:
+                Navigator.of(context).pop();
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AccumulatedStatistics(user: user)));
                 break;
             }
           },
@@ -192,7 +207,8 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
                                 archivedAppointments.clear();
                                 getArchivedAppointments(patientList[value].id);
                                 patientIndex = value;
-                                setState(() {});
+
+
                               }
                             }),
                       ],
@@ -268,7 +284,7 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
             Row(
               children: [
                 const Text(
-                  "Patient Name:  ",
+                  "Name: ",
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                 ),
                 Text(

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:appoint_webapp/secretary/admin_panel.dart';
 import 'package:appoint_webapp/secretary/register_patient.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -42,7 +43,7 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
     print("$SERVER_IP/Doctor/Appointments");
     var res = await http.get(Uri.parse("$SERVER_IP/Registrator/Patients"),
         headers: {HttpHeaders.authorizationHeader: "Bearer " + user.token});
-    print("getting appointment list");
+    print("getting patient list");
     print(res.body);
     if (res.statusCode != 200) {
       print("Error");
@@ -91,6 +92,11 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
                 icon: Icon(Icons.menu_book),
                 label: 'Schedule',
               ),
+
+              BottomNavigationBarItem(
+                icon: Icon(Icons.admin_panel_settings),
+                label: 'Admin Panel',
+              ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.account_box),
                 label: 'Register',
@@ -98,6 +104,11 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
             ],
             onTap: (option) {
               if (option == 1) {
+                Navigator.of(context).pop();
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AdminPanel(user: user)));
+              }
+              else if (option == 2) {
                 Navigator.of(context).pop();
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => RegisterPatient()));

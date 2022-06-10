@@ -1,8 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:appoint_webapp/doctor/accumulated_statistics.dart';
 import 'package:appoint_webapp/doctor/appointment_form.dart';
 import 'package:appoint_webapp/model/AppointmentInfo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:http/http.dart' as http;
 import '../model/User.dart';
 import 'appointment_archives.dart';
 import 'list_of_appointments.dart';
@@ -16,39 +20,6 @@ class AppointmentStatistics extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: const Color(0xFF5DB075),
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.menu_book),
-              label: 'App. List',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.library_books),
-              label: 'App. History',
-            ),
-          ],
-          onTap: (option) {
-            switch (option) {
-              case 0:
-                Navigator.of(context).pop();
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ListOfAppointments(user: user)));
-                break;
-              case 1:
-                Navigator.of(context).pop();
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => AppointmentArchives(
-                              user: user,
-                            )));
-                break;
-            }
-          },
-          selectedItemColor: Colors.white),
       appBar: AppBar(
         backgroundColor: Color(0xFF5DB075),
         title: const Text(
@@ -198,4 +169,5 @@ class AppointmentStatistics extends StatelessWidget {
       ),
     ];
   }
+
 }

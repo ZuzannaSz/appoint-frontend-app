@@ -15,62 +15,22 @@ class ArchAppointmentStatistics extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Medicine> medicineList = [
-      Medicine.withoutId(
-          doses: 4,
-          name: "name",
-          remarks: "remarks",
-          prescriptionDate: "prescriptionDate",
-          schedule: "schedule",
-          unit: "unit")
-    ];
+    List<Medicine> medicineList = appointment.prescriptionMeds;
     appointment = ArchivedAppointment.withDetailedInfo(
       1,
-        "patientName",
-        "patientSurname",
-        "date",
-        12,
-        true,
-        "patientRemarks",
-        true,
-        true,
-        "visitRemarks",
-        "time",
-        "phoneNumber",
+        appointment.patientName,
+        appointment.patientSurname,
+        appointment.date,
+       appointment.duration,
+        appointment.necessary,
+        appointment.patientRemarks,
+        appointment.receiptGiven,
+        appointment.tookPlace,
+        appointment.visitRemarks,
+        appointment.time,
+        appointment.phoneNumber,
         medicineList);
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,
-          backgroundColor: const Color(0xFF5DB075),
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.menu_book),
-              label: 'App. List',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.library_books),
-              label: 'App. History',
-            ),
-          ],
-          onTap: (option) {
-            switch (option) {
-              case 0:
-                Navigator.of(context).pop();
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ListOfAppointments(user: user)));
-                break;
-              case 1:
-                Navigator.of(context).pop();
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => AppointmentArchives(user: user)));
-                break;
-            }
-          },
-          selectedItemColor: Colors.white),
       appBar: AppBar(
         backgroundColor: Color(0xFF5DB075),
         title: const Text(

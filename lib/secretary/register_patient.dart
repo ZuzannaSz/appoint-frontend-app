@@ -6,6 +6,8 @@ import 'package:appoint_webapp/secretary/schedule_appointment.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'admin_panel.dart';
+
 class RegisterPatient extends StatelessWidget {
   final String SERVER_IP = "https://pz-backend2022.herokuapp.com/api";
 
@@ -32,12 +34,16 @@ class RegisterPatient extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         bottomNavigationBar: BottomNavigationBar(
-          currentIndex: 1,
+          currentIndex: 2,
           backgroundColor: const Color(0xFF5DB075),
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.menu_book),
               label: 'Schedule',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.admin_panel_settings),
+              label: 'Admin Panel',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.account_box),
@@ -51,6 +57,10 @@ class RegisterPatient extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) => ScheduleAppointment(user: user,)));
+            }else if (option == 1) {
+              Navigator.of(context).pop();
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => AdminPanel(user: user)));
             }
           },
           selectedItemColor: Colors.white,

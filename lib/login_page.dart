@@ -60,7 +60,10 @@ class _SignInFormState extends State<SignInForm> {
       user.token = tokens['token'];
       user.refreshToken = tokens['refreshToken'];
       user.username = userEmail;
+
       Map decodedToken = parseJwt(user.token);
+      user.role = decodedToken['role'];
+      print(decodedToken);
       if(decodedToken['role'] == "administrator"){
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => ScheduleAppointment(user: user,)));
