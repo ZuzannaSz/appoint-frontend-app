@@ -87,10 +87,11 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
       print(jsonResponse);
 
       for (var record in jsonResponse) {
-        _patientList.add(Patient(
+        _patientList.add(Patient.withId(record["id"],
             record["name"], record["surname"], record["telephoneNumber"]));
       }
       _displayPatientList = _patientList;
+      print(_patientList[0]);
       setState(() {});
       // for (var member in jsonResponse["board"]["members"]) {
       //   if (member["email"] == user.email) user.name = member["name"];
