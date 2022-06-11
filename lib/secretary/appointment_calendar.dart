@@ -106,9 +106,11 @@ class _AppointmentCalendarState extends State<AppointmentCalendar> {
       lang = languageDictionaryPL.keys
           .firstWhere((k) => languageDictionaryPL[k] == language);
     } else {
-      lang = speciality;
+      lang = language;
     }
     String tempDate = date.text;
+    print(spec);
+    print(lang);
     var res = await http.get(
         Uri.parse(
             "$SERVER_IP/Appointment/GetPossibleTerms?Specialization=$spec&date=$tempDate&Length=60&Language=$lang"),
