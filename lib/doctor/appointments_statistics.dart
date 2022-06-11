@@ -17,8 +17,7 @@ class AppointmentStatistics extends StatelessWidget {
   AppointmentStatistics(
       {Key? key,
       required this.appointment,
-      required this.user,
-      required this.archived})
+      required this.user,})
       : super(key: key);
 
   @override
@@ -173,8 +172,7 @@ class AppointmentStatistics extends StatelessWidget {
       const SizedBox(
         height: 60,
       ),
-      !archived
-          ? Padding(
+          Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 60, 0),
               child: ElevatedButton(
                   onPressed: () {
@@ -201,9 +199,6 @@ class AppointmentStatistics extends StatelessWidget {
                           RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       )))),
-            )
-          : Padding(
-              padding: EdgeInsets.all(0),
             ),
       const SizedBox(
         height: 80,

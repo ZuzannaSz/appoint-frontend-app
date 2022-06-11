@@ -1,82 +1,62 @@
-import 'package:appoint_webapp/doctor/appointment_form.dart';
 import 'package:appoint_webapp/model/AppointmentInfo.dart';
+import 'package:appoint_webapp/model/Medicine.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../generated/l10n.dart';
-import '../model/Patient.dart';
 import '../model/User.dart';
 import 'appointment_archives.dart';
 import 'list_of_appointments.dart';
 
 class ArchAppointmentStatistics extends StatelessWidget {
-  late User user;
   late ArchivedAppointment appointment;
-  late bool archived;
-  ArchAppointmentStatistics({Key? key, required this.appointment, required this.user,required this.archived})
+  late User user;
+  ArchAppointmentStatistics({Key? key, required this.appointment, required this.user})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    List<Medicine> medicineList = appointment.prescriptionMeds;
+    appointment = ArchivedAppointment.withDetailedInfo(
+      1,
+        appointment.patientName,
+        appointment.patientSurname,
+        appointment.date,
+       appointment.duration,
+        appointment.necessary,
+        appointment.patientRemarks,
+        appointment.receiptGiven,
+        appointment.tookPlace,
+        appointment.visitRemarks,
+        appointment.time,
+        appointment.phoneNumber,
+        medicineList);
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.teal,
-          items:  <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.menu_book),
-              label: S.of(context).appList,
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.library_books),
-              label: S.of(context).appHistory,
-            ),
-          ],
-          onTap: (option) {
-            switch (option) {
-              case 0:
-                Navigator.of(context).pop();
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ListOfAppointments(user: user)));
-                break;
-              case 1:
-                Navigator.of(context).pop();
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => AppointmentArchives(user: user)));
-                break;
-            }
-          },
-          selectedItemColor: Colors.white),
       appBar: AppBar(
-        backgroundColor:Colors.teal,
-        title:  Text(
-          S.of(context).patientStatistics,
-          style: const TextStyle(color: Colors.white),
+        backgroundColor: Colors.teal,
+        title: const Text(
+          "Patient Statistics",
+          style: TextStyle(color: Colors.white),
         ),
       ),
       body: Center(
           child: Container(
-            width: 300.0,
-            height: MediaQuery.of(context).size.height * 0.7,
-            margin: const EdgeInsets.all(16.0),
-            child: ListView(
-                padding: const EdgeInsets.fromLTRB(60, 0, 0, 0),
-                children: _buildGeneralInformation(context)),
-          )),
+        width: 300.0,
+        height: MediaQuery.of(context).size.height * 0.7,
+        child: ListView(
+            padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+            children: _buildGeneralInformation(context)),
+      )),
     );
   }
 
-  _buildGeneralInformation(BuildContext context) {
+  List<Widget> _buildGeneralInformation(BuildContext context) {
     return [
       const SizedBox(
         height: 40,
       ),
-       Text(
-        S.of(context).generalInformation,
-        style: const TextStyle(
+      const Text(
+        "General Information",
+        style: TextStyle(
             color: Colors.teal,
             fontSize: 24,
             fontWeight: FontWeight.bold),
@@ -86,9 +66,9 @@ class ArchAppointmentStatistics extends StatelessWidget {
       ),
       Row(
         children: [
-           Text(
-            S.of(context).nameForm,
-            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          const Text(
+            "Name: ",
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           Text(appointment.patientName, style: const TextStyle(fontSize: 17)),
         ],
@@ -98,9 +78,9 @@ class ArchAppointmentStatistics extends StatelessWidget {
       ),
       Row(
         children: [
-           Text(
-            S.of(context).surnameForm,
-            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          const Text(
+            "Surname: ",
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           Text(appointment.patientSurname, style: TextStyle(fontSize: 17)),
         ],
@@ -110,21 +90,9 @@ class ArchAppointmentStatistics extends StatelessWidget {
       ),
       Row(
         children: [
-           Text(
-            S.of(context).pesel,
-            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-          ),
-          Text("98040705050", style: TextStyle(fontSize: 17)),
-        ],
-      ),
-      const SizedBox(
-        height: 20,
-      ),
-      Row(
-        children: [
-           Text(
-            S.of(context).phoneNumberForm,
-            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          const Text(
+            "Phone number: ",
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           Text(appointment.phoneNumber, style: TextStyle(fontSize: 17)),
         ],
@@ -133,10 +101,10 @@ class ArchAppointmentStatistics extends StatelessWidget {
         height: 20,
       ),
       Row(
-        children:  [
-           Text(
-            S.of(context).visitDate,
-            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+        children: [
+          const Text(
+            "Visit date: ",
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           Text(appointment.date, style: TextStyle(fontSize: 17)),
         ],
@@ -145,10 +113,10 @@ class ArchAppointmentStatistics extends StatelessWidget {
         height: 20,
       ),
       Row(
-        children:  [
-           Text(
-            S.of(context).visitTime,
-            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+        children: [
+          const Text(
+            "Visit time: ",
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           Text(appointment.time, style: TextStyle(fontSize: 17)),
         ],
@@ -157,41 +125,120 @@ class ArchAppointmentStatistics extends StatelessWidget {
         height: 20,
       ),
       Row(
-        children:  [
-          Text(
-            S.of(context).isUrgent,
-            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+        children: [
+          const Text(
+            "Visit duration: ",
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
-          Text(S.of(context).no, style: const TextStyle(fontSize: 17)),
+          Text(appointment.duration.toString(), style: TextStyle(fontSize: 17)),
         ],
       ),
       const SizedBox(
-        height: 60,
+        height: 20,
       ),
-      !archived?Padding(
-        padding: const EdgeInsets.fromLTRB(0, 0, 60, 0),
-        child: ElevatedButton(
-            onPressed: () {
-
-              Navigator.of(context).pop();
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (context) => AppointmentForm(user: user, appointment: ArchivedAppointment.fromNewAppointment(appointment),)));
-            },
-            child:  Text(S.of(context).appForm, style: const TextStyle(fontSize: 18),),
-            style: ButtonStyle(
-                fixedSize: MaterialStateProperty.all(const Size(60, 60)),
-                backgroundColor:
-                MaterialStateProperty.all(Colors.teal),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    )))),
-      ):Padding(padding: EdgeInsets.all(0),),
+      Row(
+        children: [
+          Text(
+            "Took place?: ",
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          ),
+          Text(appointment.tookPlace ? "Yes" : "No",
+              style: TextStyle(fontSize: 17)),
+        ],
+      ),
       const SizedBox(
-        height: 80,
+        height: 20,
+      ),
+      Row(
+        children: [
+          Text(
+            "Was urgent?: ",
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          ),
+          Text(appointment.necessary ? "Yes" : "No",
+              style: TextStyle(fontSize: 17)),
+        ],
+      ),
+      const SizedBox(
+        height: 20,
+      ),
+      Row(
+        children: [
+          Text(
+            "Was Receipt Given?: ",
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          ),
+          Text(appointment.receiptGiven ? "Yes" : "No",
+              style: TextStyle(fontSize: 17)),
+        ],
+      ),
+      const SizedBox(
+        height: 20,
+      ),
+      _medicineTable(appointment.prescriptionMeds.length),
+      const SizedBox(
+        height: 20,
+      ),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(0, 0, 80, 0),
+        child: Column(
+          children: [
+            const Text(
+              "Remarks about visit: ",
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(appointment.visitRemarks, style: TextStyle(fontSize: 17)),
+          ],
+        ),
+      ),
+      const SizedBox(
+        height: 20,
+      ),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(0, 0, 80, 0),
+        child: Column(
+          children: [
+            const Text(
+              "Remarks about patient: ",
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(appointment.patientRemarks, style: TextStyle(fontSize: 17)),
+          ],
+        ),
+      ),
+      const SizedBox(
+        height: 20,
       ),
     ];
+  }
+
+  _medicineTable(int itemCount) {
+    return DataTable(columns: <DataColumn>[
+      const DataColumn(
+        label: Text('Name'),
+      ),
+      DataColumn(
+        label: Row(
+          children: [
+            Text('Doses'),
+            SizedBox(
+              width: 20,
+            ),
+          ],
+        ),
+      ),
+    ], rows: [
+      for (var data in appointment.prescriptionMeds)
+        DataRow(cells: [
+          DataCell(Text(data.name)),
+          DataCell(Text("${data.doses} ${data.unit} ${data.schedule}")),
+        ]),
+    ]);
   }
 }

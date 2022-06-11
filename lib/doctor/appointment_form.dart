@@ -1,7 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:appoint_webapp/doctor/list_of_appointments.dart';
 import 'package:appoint_webapp/model/AppointmentInfo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import '../generated/l10n.dart';
 import '../model/Medicine.dart';
@@ -36,6 +40,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
         schedule: "",
         unit: "")
   ];
+  final String SERVER_IP = 'https://pz-backend2022.herokuapp.com/api';
   late List<Medicine> chosenMedicineList = [];
   late List<TextEditingController> dosageList = [];
   late List<String> unitList = [];
@@ -52,6 +57,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   @override
   void initState() {
     user = widget.user;
+    getMedicineList();
     super.initState();
   }
 
@@ -95,7 +101,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
             },
             selectedItemColor: Colors.white),
         appBar: AppBar(
-
           title: Text(
             S.of(context).appointmentForm,
             style: TextStyle(color: Colors.white),
@@ -281,7 +286,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 0, 40, 20),
                   child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        sendForm();
+                        Navigator.of(context).pop();
+                      },
                       child: Text(
                         S.of(context).send,
                         style: TextStyle(fontSize: 16),
@@ -289,8 +297,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
                       style: ButtonStyle(
                           fixedSize:
                               MaterialStateProperty.all(const Size(100, 50)),
-                          backgroundColor: MaterialStateProperty.all(
-                              Colors.teal),
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.teal),
                           shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
@@ -390,8 +398,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
                     Container(
                       decoration: const BoxDecoration(
                           border: Border(
-                              right: BorderSide(
-                                  color: Colors.teal, width: 2.0))),
+                              right:
+                                  BorderSide(color: Colors.teal, width: 2.0))),
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(27, 8, 20, 8),
                         child: Text(
@@ -403,7 +411,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                         ),
                       ),
                     ),
-                     Padding(
+                    Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Text(
                         S.of(context).chosenMedicine,
@@ -434,8 +442,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                     style: ButtonStyle(
                         fixedSize:
                             MaterialStateProperty.all(const Size(110, 60)),
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.teal),
+                        backgroundColor: MaterialStateProperty.all(Colors.teal),
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
@@ -505,9 +512,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                     Container(
                       decoration: const BoxDecoration(
                           border: Border(
-                              right: BorderSide(
-                                  color: Colors.teal, width: 2.0))),
-                      child:  Padding(
+                              right:
+                                  BorderSide(color: Colors.teal, width: 2.0))),
+                      child: Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Text(
                           S.of(context).medicineList,
@@ -518,7 +525,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                         ),
                       ),
                     ),
-                     Padding(
+                    Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Text(
                         S.of(context).dosage,
@@ -543,14 +550,13 @@ class _AppointmentFormState extends State<AppointmentForm> {
                     style: ButtonStyle(
                         fixedSize:
                             MaterialStateProperty.all(const Size(110, 60)),
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.teal),
+                        backgroundColor: MaterialStateProperty.all(Colors.teal),
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ))),
-                    child:  Text(
+                    child: Text(
                       S.of(context).finish,
                       style: TextStyle(fontSize: 18),
                     ),
@@ -562,10 +568,12 @@ class _AppointmentFormState extends State<AppointmentForm> {
                         } on Exception {
                           showDialog(
                               context: context,
-                              builder: (context) =>  AlertDialog(
-                                  title: Text(S.of(context).incorrectDosageInput),
-                                  content: Text(
-                                      S.of(context).dosageInputsMustBeAlphanumeric)));
+                              builder: (context) => AlertDialog(
+                                  title:
+                                      Text(S.of(context).incorrectDosageInput),
+                                  content: Text(S
+                                      .of(context)
+                                      .dosageInputsMustBeAlphanumeric)));
                         }
 
                         chosenMedicineList[i].schedule = scheduleList[i];
@@ -584,7 +592,31 @@ class _AppointmentFormState extends State<AppointmentForm> {
           )),
     );
   }
-
+  getMedicineList() async {
+    var res = await http.get(Uri.parse("$SERVER_IP/Drug/GetAll"),
+        headers: {HttpHeaders.authorizationHeader: "Bearer " + user.token});
+    print("getting appointment list");
+    print(res.body);
+    if (res.statusCode != 200) {
+      print("Drug/GetAll");
+      print(res.statusCode);
+      print(res.reasonPhrase);
+    } else {
+      medicineList.clear();
+      List jsonList = jsonDecode(res.body);
+      for (var med in jsonList) {
+        medicineList.add(Medicine.full(
+            id: med["id"],
+            doses: 0,
+            name: med["name"],
+            remarks: "",
+            prescriptionDate: "",
+            schedule: "a day",
+            unit: "ml"));
+      }
+      setState(() {});
+    }
+  }
   _buildRecord(int index) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
@@ -720,8 +752,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
                               style: ButtonStyle(
                                   fixedSize: MaterialStateProperty.all(
                                       const Size(50, 50)),
-                                  backgroundColor: MaterialStateProperty.all(
-                                       Colors.teal),
+                                  backgroundColor:
+                                      MaterialStateProperty.all(Colors.teal),
                                   shape: MaterialStateProperty.all<
                                           RoundedRectangleBorder>(
                                       RoundedRectangleBorder(
@@ -740,7 +772,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(50, 15, 0, 15),
               child: Row(
-                children:  [
+                children: [
                   Icon(Icons.add),
                   SizedBox(
                     width: 20,
@@ -756,6 +788,39 @@ class _AppointmentFormState extends State<AppointmentForm> {
         ),
       ),
     );
+  }
+
+  sendForm() async {
+    List medicineMapList = [];
+    Map medicineMap = {};
+    for (Medicine med in medicineList) {
+      medicineMap.putIfAbsent("id", () => med.id);
+      medicineMap.putIfAbsent("name", () => med.name);
+      medicineMap.putIfAbsent("dosage", () => med.doses);
+      medicineMap.putIfAbsent("timeUnit", () => med.unit);
+      medicineMap.putIfAbsent("remarks", () => med.remarks);
+      medicineMap.putIfAbsent("schedule", () => med.schedule);
+      medicineMapList.add(new Map.from(medicineMap));
+      medicineMap.clear();
+    }
+    var response = await http.post(Uri.parse('$SERVER_IP/Appointment/Archive'),
+        headers: {
+          HttpHeaders.contentTypeHeader: "application/json; charset=utf-8",
+          HttpHeaders.authorizationHeader: "Bearer " + user.token
+        },
+        body: jsonEncode({
+          "id": widget.appointment.id,
+          "patientRemarks": _patientRemarksController.text,
+          "visitRemarks": _visitRemarksController.text,
+          "wasNecessary": widget.appointment.necessary,
+          "wasPrescriptionIssued": widget.appointment.receiptGiven,
+          "medicine": medicineMapList
+        }));
+    print(response.reasonPhrase);
+    print(response.statusCode);
+    setState(() {
+
+    });
   }
 
   _buildDosageRecord(int index) {
@@ -806,11 +871,15 @@ class _AppointmentFormState extends State<AppointmentForm> {
           const SizedBox(width: 10),
           DropdownButton(
               value: scheduleList[index],
-              items:  [
-                DropdownMenuItem(child: Text(S.of(context).aDay), value: "a day"),
-                DropdownMenuItem(child: Text(S.of(context).aWeek), value: "a week"),
-                DropdownMenuItem(child: Text(S.of(context).aMonth), value: "a month"),
-                DropdownMenuItem(child: Text(S.of(context).aYear), value: "a year"),
+              items: [
+                DropdownMenuItem(
+                    child: Text(S.of(context).aDay), value: "a day"),
+                DropdownMenuItem(
+                    child: Text(S.of(context).aWeek), value: "a week"),
+                DropdownMenuItem(
+                    child: Text(S.of(context).aMonth), value: "a month"),
+                DropdownMenuItem(
+                    child: Text(S.of(context).aYear), value: "a year"),
               ],
               onChanged: (value) {
                 if (value is String) {

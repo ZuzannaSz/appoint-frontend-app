@@ -93,5 +93,6 @@
   "incorrectDosageInput": "Nieprawidłowa dawka!",
   "finish": "Zakończ",
   "dosage": "Dawkowanie",
-  "chosenMedicine": "Wybrany Lek"
+  "chosenMedicine": "Wybrany Lek",
+  "adminPanel": "Panel Admina"
 }

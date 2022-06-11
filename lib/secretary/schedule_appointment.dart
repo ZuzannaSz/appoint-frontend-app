@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import '../generated/l10n.dart';
 import '../model/Patient.dart';
 import '../model/User.dart';
+import 'admin_panel.dart';
 import 'appointment_calendar.dart';
 
 class ScheduleAppointment extends StatefulWidget {
@@ -36,6 +37,7 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
   late TextEditingController doctorName = TextEditingController();
   late Map<String, String> appointment;
   late Map<String, String> closestDate;
+  late List<Patient> _displayPatientList = [];
   late List<String> specialities;
   String speciality = "Speciality";
   final specialityDictionaryPL = {
@@ -76,6 +78,7 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
     print("$SERVER_IP/Doctor/Appointments");
     var res = await http.get(Uri.parse("$SERVER_IP/Registrator/Patients"),
         headers: {HttpHeaders.authorizationHeader: "Bearer " + user.token});
+    print("getting patient list");
     print(res.body);
     if (res.statusCode != 200) {
       print("Error");
@@ -84,10 +87,15 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
       print(jsonResponse);
 
       for (var record in jsonResponse) {
-        _patientList.add(Patient.Id(record["id"], record["name"],
-            record["surname"], record["telephoneNumber"]));
+        _patientList.add(Patient(
+            record["name"], record["surname"], record["telephoneNumber"]));
       }
+      _displayPatientList = _patientList;
       setState(() {});
+      // for (var member in jsonResponse["board"]["members"]) {
+      //   if (member["email"] == user.email) user.name = member["name"];
+      //   table.members.add(member["email"]);
+      // }
     }
   }
 
@@ -169,15 +177,24 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
                 label: S.of(context).schedule,
               ),
               BottomNavigationBarItem(
+                icon: Icon(Icons.admin_panel_settings),
+                label: 'Admin Panel',
+              ),
+              BottomNavigationBarItem(
                 icon: Icon(Icons.account_box),
                 label: S.of(context).register,
               ),
             ],
             onTap: (option) {
-              if (option == 1) {
+              if (option == 2) {
                 Navigator.of(context).pop();
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => RegisterPatient()));
+              }
+              else if (option == 1) {
+                Navigator.of(context).pop();
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AdminPanel(user:user)));
               }
             },
             selectedItemColor: Colors.white),
@@ -271,7 +288,7 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
                           keyboardType: TextInputType.multiline,
                           enabled: false,
                           decoration: InputDecoration(
-                            prefixIcon: const Icon(Icons.medical_information),
+                            prefixIcon: const Icon(Icons.medical_services),
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 20),
                             border: OutlineInputBorder(

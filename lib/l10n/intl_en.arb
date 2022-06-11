@@ -93,5 +93,6 @@
   "incorrectDosageInput": "Incorrect dosage input!",
   "finish": "Finish",
   "dosage": "Dosage",
-  "chosenMedicine": "Chosen Medicine"
+  "chosenMedicine": "Chosen Medicine",
+  "adminPanel": "Admin Panel"
 }

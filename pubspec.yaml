@@ -36,6 +36,7 @@ dependencies:
   http: ^0.13.4
   rxdart: ^0.27.3
   flutter_native_timezone: ^2.0.0
+  syncfusion_flutter_charts: ^20.1.58+1
   table_calendar: ^3.0.2
   flutter_localizations:
     sdk: flutter

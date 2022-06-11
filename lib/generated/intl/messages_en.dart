@@ -32,6 +32,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "addMedicineName":
             MessageLookupByLibrary.simpleMessage("Add medicine name"),
         "addPatient": MessageLookupByLibrary.simpleMessage("Add Patient"),
+        "adminPanel": MessageLookupByLibrary.simpleMessage("Admin Panel"),
         "appDate": MessageLookupByLibrary.simpleMessage("App. Date:"),
         "appForm": MessageLookupByLibrary.simpleMessage("App. Form"),
         "appHistory": MessageLookupByLibrary.simpleMessage("App. History"),

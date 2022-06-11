@@ -999,6 +999,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Admin Panel`
+  String get adminPanel {
+    return Intl.message(
+      'Admin Panel',
+      name: 'adminPanel',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -166,8 +166,8 @@ class _SignInFormState extends State<SignInForm> {
           height: 20,
         ),
         Container(
-          width: MediaQuery.of(context).size.width * 0.4,
-          height: MediaQuery.of(context).size.width * 0.4,
+          width: MediaQuery.of(context).size.width * 0.3,
+          height: MediaQuery.of(context).size.width * 0.3,
           child: Image.asset(
             'assets/logo1.png',
             color: Colors.teal,
@@ -189,7 +189,7 @@ class _SignInFormState extends State<SignInForm> {
         ),
         _buildPasswordField(),
         const SizedBox(
-          height: 60,
+          height: 40,
         ),
         ElevatedButton(
             onPressed: () {
