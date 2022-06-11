@@ -274,7 +274,12 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                           setState(() {});
                           break;
                         case 5:
-                          _dayOfAppointment = _appointmentList.getSaturday();
+                        _dayOfAppointment = _appointmentList.getSaturday();
+                        _displayDayOfAppointment = _dayOfAppointment;
+                        setState(() {});
+                        break;
+                        case 6:
+                          _dayOfAppointment = _appointmentList.getSunday();
                           _displayDayOfAppointment = _dayOfAppointment;
                           setState(() {});
                           break;

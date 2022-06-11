@@ -652,7 +652,7 @@ class _AdminPanel extends State<AdminPanel> {
     return Dialog(
       child: Container(
         width: 200,
-        height: 290,
+        height: 370,
         child: Center(
             child: Form(
               child: Column(
@@ -688,6 +688,25 @@ class _AdminPanel extends State<AdminPanel> {
                       ],
                     ),
                   ),
+                  SizedBox(height: 20),
+                  const Text("Specialization: ",
+                      style: TextStyle(fontSize: 17)),
+                  SizedBox(height: 20),
+                  SizedBox(
+                      width: 200,
+                      height: 30,
+                      child: FormField(
+                          builder: (context) =>
+                              TextField(
+                                  controller: specializationController,
+                                  decoration: InputDecoration(
+                                    contentPadding:
+                                    const EdgeInsets.fromLTRB(
+                                        20, 0, 0, 0),
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                        BorderRadius.circular(20.0)),
+                                  )))),
                   SizedBox(
                     height: 40,
                   ),
@@ -703,7 +722,7 @@ class _AdminPanel extends State<AdminPanel> {
     return Dialog(
       child: Container(
         width: 200,
-        height: 320,
+        height: 370,
         child: ListView(
           shrinkWrap: true,
           children: [
@@ -950,6 +969,7 @@ class _AdminPanel extends State<AdminPanel> {
     );
     print(response.then((value) => print(value.statusCode)));
     print(response.then((value) => print(value.reasonPhrase)));
+    initShiftList();
     setState(() {});
   }
 
@@ -977,7 +997,7 @@ class _AdminPanel extends State<AdminPanel> {
           HttpHeaders.authorizationHeader: "Bearer ${user.token}"
         },
         body: jsonEncode({
-          "name": officeNumController.text,
+          "name": specializationController.text,
         }));
     print(response.then((value) => print(value.statusCode)));
     print(response.then((value) => print(value.reasonPhrase)));
@@ -993,8 +1013,8 @@ class _AdminPanel extends State<AdminPanel> {
     }
 
 
-    String shiftStart = "${today.year}-${today.month.toString().padLeft(2,'0')}-${today.day.toString().padLeft(2,'0')}T${shiftFromController.text}.000Z";
-    String shiftEnd = "${today.year}-${today.month.toString().padLeft(2,'0')}-${today.day.toString().padLeft(2,'0')}T${shiftToController.text}.000Z";
+    String shiftStart = "${today.year}-${today.month.toString().padLeft(2,'0')}-${today.day.toString().padLeft(2,'0')}T${shiftFromController.text.padLeft(8,'0')}.000Z";
+    String shiftEnd = "${today.year}-${today.month.toString().padLeft(2,'0')}-${today.day.toString().padLeft(2,'0')}T${shiftToController.text.padLeft(8,'0')}.000Z";
     var response = http.post(
         Uri.parse('$SERVER_IP/AvailableHours/RegisterAvailableHours'),
         headers: {
@@ -1008,7 +1028,7 @@ class _AdminPanel extends State<AdminPanel> {
           "end": shiftEnd
         }));
     print(jsonEncode({
-      "doctorId": currentDoctor.id,
+      "doctorId": 14,
       "roomId": currentOffice.id,
       "start": shiftStart,
       "end": shiftEnd
