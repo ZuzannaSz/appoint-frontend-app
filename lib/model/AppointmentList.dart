@@ -46,6 +46,9 @@ class AppointmentList {
   List getFriday(){
     return appointmentMap["Friday"];
   }
+  List getSaturday(){
+    return appointmentMap["Saturday"];
+  }
   setAppointmentMap(map){
     assert(map != null);
     appointmentMap = map;

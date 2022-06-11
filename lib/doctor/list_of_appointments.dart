@@ -273,6 +273,11 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                           _displayDayOfAppointment = _dayOfAppointment;
                           setState(() {});
                           break;
+                        case 5:
+                          _dayOfAppointment = _appointmentList.getSaturday();
+                          _displayDayOfAppointment = _dayOfAppointment;
+                          setState(() {});
+                          break;
                       }
                     },
                     child: Padding(

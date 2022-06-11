@@ -793,7 +793,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
   sendForm() async {
     List medicineMapList = [];
     Map medicineMap = {};
-    for (Medicine med in medicineList) {
+    for (Medicine med in chosenMedicineList) {
       medicineMap.putIfAbsent("id", () => med.id);
       medicineMap.putIfAbsent("name", () => med.name);
       medicineMap.putIfAbsent("dosage", () => med.doses);
