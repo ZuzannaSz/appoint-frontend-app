@@ -1002,6 +1002,7 @@ class _AdminPanel extends State<AdminPanel> {
     print(response.then((value) => print(value.statusCode)));
     print(response.then((value) => print(value.reasonPhrase)));
     specializationController.clear();
+    _getShiftList();
     setState(() {});
   }
 
@@ -1016,7 +1017,7 @@ class _AdminPanel extends State<AdminPanel> {
     String shiftStart = "${today.year}-${today.month.toString().padLeft(2,'0')}-${today.day.toString().padLeft(2,'0')}T${shiftFromController.text.padLeft(8,'0')}.000Z";
     String shiftEnd = "${today.year}-${today.month.toString().padLeft(2,'0')}-${today.day.toString().padLeft(2,'0')}T${shiftToController.text.padLeft(8,'0')}.000Z";
     var response = http.post(
-        Uri.parse('$SERVER_IP/AvailableHours/RegisterAvailableHours'),
+        Uri.parse('$SERVER_IP/AvailableHours/Register'),
         headers: {
           HttpHeaders.contentTypeHeader: "application/json; charset=utf-8",
           HttpHeaders.authorizationHeader: "Bearer ${user.token}"
