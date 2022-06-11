@@ -94,5 +94,7 @@
   "finish": "Zakończ",
   "dosage": "Dawkowanie",
   "chosenMedicine": "Wybrany Lek",
-  "adminPanel": "Panel Admina"
+  "adminPanel": "Panel Admina",
+  "patientAddedSuccessfully": "Pacjent dodany poprawnie",
+  "errorSavingThePatient": "Błąd dodawania pacjenta"
 }

@@ -117,7 +117,7 @@ class _CancelAppointment extends State<CancelAppointment> {
               if (option == 1) {
                 Navigator.of(context).pop();
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => RegisterPatient()));
+                    MaterialPageRoute(builder: (context) => RegisterPatient(user: user,)));
               }
             },
             selectedItemColor: Colors.white),

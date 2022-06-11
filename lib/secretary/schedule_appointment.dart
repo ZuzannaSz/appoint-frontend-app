@@ -190,7 +190,7 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
               if (option == 2) {
                 Navigator.of(context).pop();
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => RegisterPatient()));
+                    MaterialPageRoute(builder: (context) => RegisterPatient(user: user,)));
               }
               else if (option == 1) {
                 Navigator.of(context).pop();
@@ -572,7 +572,7 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
       onTap: () {
         Navigator.of(context).pop();
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => RegisterPatient()));
+            MaterialPageRoute(builder: (context) => RegisterPatient(user: user,)));
       },
       child: Container(
         decoration:

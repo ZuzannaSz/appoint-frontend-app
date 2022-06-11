@@ -75,6 +75,7 @@ class _AppointmentCalendarState extends State<AppointmentCalendar> {
   void initState() {
     user = widget.user;
     speciality = widget.specialityInit;
+    print(speciality);
     language = "Polski";
     date.text = DateTime.now().toString().substring(0, 10);
     _initLanguages();
@@ -182,7 +183,6 @@ class _AppointmentCalendarState extends State<AppointmentCalendar> {
           specialities.add(record["name"].toString());
         }
       }
-      speciality = specialities[0];
     }
     setState(() {});
   }

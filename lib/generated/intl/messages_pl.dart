@@ -74,6 +74,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Nie można wyświetlić wizyt"),
         "errorRemovingVisit": MessageLookupByLibrary.simpleMessage(
             "Błąd przy odwoływaniu wizyty"),
+        "errorSavingThePatient":
+            MessageLookupByLibrary.simpleMessage("Błąd dodawania pacjenta"),
         "errorSavingVisit":
             MessageLookupByLibrary.simpleMessage("Błąd zapisywania wizyty"),
         "field": MessageLookupByLibrary.simpleMessage("Pole "),
@@ -105,6 +107,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Nadchodzące wizyty"),
         "password": MessageLookupByLibrary.simpleMessage("Hasło"),
         "patient2": MessageLookupByLibrary.simpleMessage("Pacjent"),
+        "patientAddedSuccessfully":
+            MessageLookupByLibrary.simpleMessage("Pacjent dodany poprawnie"),
         "patientList": MessageLookupByLibrary.simpleMessage("Lista Pacjentów"),
         "patientName": MessageLookupByLibrary.simpleMessage("Imię Pacjenta:"),
         "patientRemarks":

@@ -75,6 +75,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Error getting appointments"),
         "errorRemovingVisit":
             MessageLookupByLibrary.simpleMessage("Error removing visit"),
+        "errorSavingThePatient":
+            MessageLookupByLibrary.simpleMessage("Error saving the patient"),
         "errorSavingVisit":
             MessageLookupByLibrary.simpleMessage("Error saving visit"),
         "field": MessageLookupByLibrary.simpleMessage("Field "),
@@ -106,6 +108,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Oncoming appointments"),
         "password": MessageLookupByLibrary.simpleMessage("password"),
         "patient2": MessageLookupByLibrary.simpleMessage("Patient"),
+        "patientAddedSuccessfully":
+            MessageLookupByLibrary.simpleMessage("Patient added successfully"),
         "patientList": MessageLookupByLibrary.simpleMessage("Patient List"),
         "patientName": MessageLookupByLibrary.simpleMessage("Patient Name:"),
         "patientRemarks":

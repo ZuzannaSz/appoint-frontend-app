@@ -1009,6 +1009,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Patient added successfully`
+  String get patientAddedSuccessfully {
+    return Intl.message(
+      'Patient added successfully',
+      name: 'patientAddedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error saving the patient`
+  String get errorSavingThePatient {
+    return Intl.message(
+      'Error saving the patient',
+      name: 'errorSavingThePatient',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

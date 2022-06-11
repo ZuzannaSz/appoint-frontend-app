@@ -94,5 +94,7 @@
   "finish": "Finish",
   "dosage": "Dosage",
   "chosenMedicine": "Chosen Medicine",
-  "adminPanel": "Admin Panel"
+  "adminPanel": "Admin Panel",
+  "patientAddedSuccessfully": "Patient added successfully",
+  "errorSavingThePatient": "Error saving the patient"
 }
