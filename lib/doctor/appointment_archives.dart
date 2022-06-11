@@ -238,19 +238,22 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
                     padding: const EdgeInsets.fromLTRB(60, 0, 0, 0),
                     children: [
                       for (var archApp in archivedAppointments)
-                        InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        ArchAppointmentStatistics(
-                                            appointment:
-                                                archivedAppointments[0],
-                                            user: user,),
-                                  ));
-                            },
-                            child: _buildArchivedVisit(archApp))
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                          child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ArchAppointmentStatistics(
+                                              appointment:
+                                                  archApp,
+                                              user: user,),
+                                    ));
+                              },
+                              child: _buildArchivedVisit(archApp)),
+                        )
                     ]),
               ),
             ],
