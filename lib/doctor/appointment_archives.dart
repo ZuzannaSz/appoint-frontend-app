@@ -44,7 +44,7 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
       archivedAppointments.clear();
       List jsonMap = await jsonDecode(res.body);
       print(jsonMap);
-
+    int index = 0;
       for (var appointment in jsonMap) {
         List<Medicine> medicineList = [];
         for (var medicine in appointment["medicine"]) {
@@ -65,14 +65,18 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
             "${appointment["date"]}",
             appointment["length"],
             appointment["wasNecessary"],
-            patientRemarks.isEmpty?"":patientRemarks[0]["remarks"],
+            patientRemarks.isEmpty?"":patientRemarks[index]["remarks"],
             appointment["wasPrescriptionIssued"],
             appointment["tookPlace"],
             appointment["visitRemarks"],
             "${appointment["time"]}",
             appointment["roomNumber"],
             medicineList));
+        if(index < patientRemarks.length - 1){
+          index++;
+        }
       }
+
     }
     setState(() {});
   }
@@ -177,7 +181,7 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
                 child: Container(
-                  width: 330.0,
+                  width: 350.0,
                   height: 80.0,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
@@ -235,7 +239,7 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
               SizedBox(
                 height: 370,
                 child: ListView(
-                    padding: const EdgeInsets.fromLTRB(60, 0, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
                     children: [
                       for (var archApp in archivedAppointments)
                         Padding(

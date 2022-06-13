@@ -747,7 +747,19 @@ class _AppointmentFormState extends State<AppointmentForm> {
                           padding: const EdgeInsets.fromLTRB(90, 0, 90, 0),
                           child: ElevatedButton(
                               onPressed: () {
-                                Navigator.of(context).pop();
+                                if(_medicineNameController.text.isNotEmpty){
+                                  chosenMedicineList.add(Medicine.full(
+                                      id: -1,
+                                      doses: 0,
+                                      name: _medicineNameController.text,
+                                      remarks: "",
+                                      prescriptionDate: "",
+                                      schedule: "a day",
+                                      unit: "ml"));
+                                  Navigator.of(context).pop();
+                                }else
+                                  _showMissingInputError("Medicine Name", context);
+
                               },
                               style: ButtonStyle(
                                   fixedSize: MaterialStateProperty.all(
@@ -794,7 +806,10 @@ class _AppointmentFormState extends State<AppointmentForm> {
     List medicineMapList = [];
     Map medicineMap = {};
     for (Medicine med in chosenMedicineList) {
-      medicineMap.putIfAbsent("id", () => med.id);
+      if(med.id != -1){
+        medicineMap.putIfAbsent("id", () => med.id);
+
+      }
       medicineMap.putIfAbsent("name", () => med.name);
       medicineMap.putIfAbsent("dosage", () => med.doses);
       medicineMap.putIfAbsent("timeUnit", () => med.unit);
@@ -894,5 +909,39 @@ class _AppointmentFormState extends State<AppointmentForm> {
         ],
       ),
     );
+  }
+
+
+  _showMissingInputError(String missingInput, BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              title: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+                child: Text(
+                  S.of(context).field +
+                      missingInput +
+                      S.of(context).isMissingPleaseFillIt,
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+              content: Padding(
+                padding: const EdgeInsets.fromLTRB(80, 30, 80, 0),
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      fixedSize: MaterialStateProperty.all(const Size(50, 40)),
+                      backgroundColor: MaterialStateProperty.all(Colors.teal),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ))),
+                  child: Text(S.of(context).ok),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ));
+        });
   }
 }
