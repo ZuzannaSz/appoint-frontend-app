@@ -72,7 +72,7 @@ class _CancelAppointment extends State<CancelAppointment> {
     setState(() {});
   }
 
-  void removeAppointment(int id) {
+  void removeAppointment(int id) async {
     var response = http.delete(
       Uri.parse('$SERVER_IP/Appointment/Delete/$id'),
       headers: {HttpHeaders.authorizationHeader: "Bearer " + user.token},
@@ -117,7 +117,7 @@ class _CancelAppointment extends State<CancelAppointment> {
               if (option == 1) {
                 Navigator.of(context).pop();
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => RegisterPatient()));
+                    MaterialPageRoute(builder: (context) => RegisterPatient(user: user,)));
               }
             },
             selectedItemColor: Colors.white),
@@ -210,8 +210,9 @@ class _CancelAppointment extends State<CancelAppointment> {
                                           ),
                                         ),
                                         ElevatedButton(
-                                            onPressed: () {
-                                              removeAppointment(visitId);
+                                            onPressed: () async {
+                                               removeAppointment(visitId);
+
                                               Navigator.pop(context);
                                             },
                                             child: Text(

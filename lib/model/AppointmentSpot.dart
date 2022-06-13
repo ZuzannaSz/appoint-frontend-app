@@ -4,12 +4,13 @@ class AppointmentSpot{
   late String date;
   late String time;
   late String doctorName;
+  late String doctroSurname;
   late int doctorId;
   late String roomName;
   late int roomId;
   late String roomSpecialisation;
 
-  AppointmentSpot({ required this.date, required this.time, required this.doctorName, required this.doctorId, required this.roomId, required this.roomName});
+  AppointmentSpot({ required this.date, required this.time, required this.doctorName, required this.doctroSurname, required this.doctorId, required this.roomId, required this.roomName});
   AppointmentSpot.filled(int id, String date, String time, String roomNumber, String roomSpecialisation){
     this.id= id;
     this.date=date;

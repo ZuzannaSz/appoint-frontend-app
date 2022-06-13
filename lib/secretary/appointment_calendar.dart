@@ -75,6 +75,7 @@ class _AppointmentCalendarState extends State<AppointmentCalendar> {
   void initState() {
     user = widget.user;
     speciality = widget.specialityInit;
+    print(speciality);
     language = "Polski";
     date.text = DateTime.now().toString().substring(0, 10);
     _initLanguages();
@@ -128,14 +129,17 @@ class _AppointmentCalendarState extends State<AppointmentCalendar> {
         appointmentsAll.add(AppointmentSpot(
             date: record["date"].toString().substring(0, 10),
             time: record["date"].toString().substring(11, 16),
-            doctorName: record["doctorName"].toString(),
+            doctorName: record["doctorName"].toString()+" "+record["doctorSurname"].toString(),
+            doctroSurname: record["doctorSurname"].toString(),
             doctorId: record["doctorId"],
             roomId: record["roomId"],
             roomName: record["roomNumber"].toString()));
-        doctorList.add(record["doctorName"]);
+        doctorList.add(record["doctorName"]+" "+record["doctorSurname"].toString());
       }
     }
+
     appointments.addAll(appointmentsAll);
+    print(appointments[0]);
     dropdownDoctor = [S.of(context).doctor];
     dropdownDoctor.addAll(doctorList);
     setState(() {});
@@ -182,7 +186,6 @@ class _AppointmentCalendarState extends State<AppointmentCalendar> {
           specialities.add(record["name"].toString());
         }
       }
-      speciality = specialities[0];
     }
     setState(() {});
   }

@@ -7,11 +7,37 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../generated/l10n.dart';
+import '../model/User.dart';
 import 'admin_panel.dart';
 
-class RegisterPatient extends StatelessWidget {
-  final String SERVER_IP = "https://pz-backend2022.herokuapp.com/api";
+class RegisterPatient extends StatefulWidget {
+  late User user;
 
+  RegisterPatient(
+      {Key? key,required this.user})
+      : super(key: key);
+
+  @override
+  State<RegisterPatient> createState() => _RegisterPatient();
+}
+
+
+
+
+class _RegisterPatient extends State<RegisterPatient> {
+  final String SERVER_IP = "https://pz-backend2022.herokuapp.com/api";
+  late User user;
+  TextEditingController _patientName = TextEditingController();
+  TextEditingController _patientSurname = TextEditingController();
+  TextEditingController _phoneNumber = TextEditingController();
+  late String gender;
+
+  @override
+  void initState() {
+    user = widget.user;
+    gender= "M";
+    super.initState();
+  }
   _registerPatient() async {
     var response = http.post(Uri.parse('$SERVER_IP/Patient/Register'),
         headers: {
@@ -21,18 +47,30 @@ class RegisterPatient extends StatelessWidget {
         body: jsonEncode({
           "name": _patientName.text,
           "surname": _patientSurname.text,
-          "telephoneNumber": _phoneNumber.text
+          "telephoneNumber": _phoneNumber.text,
+          "sex":gender
         }));
     print(response.then((value) => print(value.statusCode)));
     print(response.then((value) => print(value.reasonPhrase)));
+    print(response.then((value) => value.statusCode == 200
+        ? ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(S.of(context).patientAddedSuccessfully),
+      duration: Duration(seconds: 1),
+    ))
+        : ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(S.of(context).errorSavingThePatient),
+      duration: Duration(seconds: 1),
+    ))));
+    _patientName.text="";
+    _patientSurname.text="";
+    _phoneNumber.text="";
+
   }
 
-  TextEditingController _patientName = TextEditingController();
-  TextEditingController _patientSurname = TextEditingController();
-  TextEditingController _phoneNumber = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: 2,
@@ -60,10 +98,12 @@ class RegisterPatient extends StatelessWidget {
                       builder: (context) => ScheduleAppointment(
                             user: user,
                           )));
-            }else if (option == 1) {
+            } else if (option == 1) {
               Navigator.of(context).pop();
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => AdminPanel(user:user)));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AdminPanel(user: user)));
             }
           },
           selectedItemColor: Colors.white,
@@ -93,6 +133,40 @@ class RegisterPatient extends StatelessWidget {
             const SizedBox(
               height: 40,
             ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: ListTile(
+                      title: Text("Male"),
+                      leading: Radio(
+                          value: "M",
+
+                          groupValue: gender,
+                          onChanged: (value)=> {
+                            setState((){
+                              gender = value.toString();
+                            })
+
+                          }),
+                    ),
+                  ),
+
+                Expanded(
+                  child: ListTile(
+                    title: Text("Female"),
+                    leading: Radio(
+                      value: "F",
+                      groupValue: gender,
+                      onChanged: (value)=> {
+                        setState(() {
+                          gender = value.toString();
+                        })
+                      },
+                    ),
+                  ),
+                )],),
             ElevatedButton(
                 onPressed: () {
                   if (_patientName.text.isEmpty) {
