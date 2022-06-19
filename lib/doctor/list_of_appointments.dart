@@ -39,13 +39,21 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
     "time"
   ];
   late User user;
+  late List displayDayOfWeek = [
+    S.of(context).monday,
+    S.of(context).tuesday,
+    S.of(context).wednesday,
+    S.of(context).thursday,
+    S.of(context).friday,
+    S.of(context).saturday,
+    S.of(context).sunday
+  ];
 
   @override
   void initState() {
     super.initState();
     user = widget.user;
     initAppointmentList();
-
     initNotification();
   }
 
@@ -72,6 +80,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
     }
     return -1;
   }
+
   initNotification() async {
     if (_dayOfAppointment.isEmpty) return;
 
@@ -82,15 +91,13 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
       return;
     }
     String appointmentDate =
-    _toDateTime(_dayOfAppointment[index]).toIso8601String();
-    DateTime parsedDate = DateTime.parse(appointmentDate);
+        _toDateTime(_dayOfAppointment[index]).toIso8601String();
+    // DateTime parsedDate = DateTime.parse(appointmentDate);
     NotificationAppLaunchDetails? details =
-    await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+        await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
     print(details?.didNotificationLaunchApp);
-    String date =
-        "${_dayOfAppointment[0]["date"]}";
-    String time =
-        "${_dayOfAppointment[0]["time"]}";
+    String date = "${_dayOfAppointment[0]["date"]}";
+    String time = "${_dayOfAppointment[0]["time"]}";
     NewAppointment appointment = NewAppointment(
         patientName: _dayOfAppointment[0]["patientName"],
         patientSurname: _dayOfAppointment[0]["patientSurname"],
@@ -103,17 +110,20 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
         id: _dayOfAppointment[0]["id"]);
     ScheduledNotification startNotification = ScheduledNotification(
         id: 0,
-        title: "Appointment started",
-        body: "Your appointment on $date at $time has started!",
+        title: S.of(context).appointmentStarted,
+        body: S.of(context).yourAppointmentOn +
+            date +
+            S.of(context).at +
+            time +
+            S.of(context).hasStarted,
         payload:
-        "${appointment.patientName}/${appointment.patientSurname}/${appointment.phoneNumber}/${appointment.date}/${appointment.time}/${user.username}/${user.token}/${user.refreshToken}",
+            "${appointment.patientName}/${appointment.patientSurname}/${appointment.phoneNumber}/${appointment.date}/${appointment.time}/${user.username}/${user.token}/${user.refreshToken}",
         delay: ScheduledNotification.countDelayInMinutes(appointmentDate));
     startNotification.scheduleNotification();
     details =
-    await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+        await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
     print(details?.didNotificationLaunchApp);
   }
-
 
   initAppointmentList() async {
     await _getAppointmentList();
@@ -123,8 +133,6 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
   }
 
   Future<AppointmentList?> _getAppointmentList() async {
-    // print("$SERVER_IP/Doctor/Appointments");
-    // print("user token ${user.token}");
     var res = await http.get(
       Uri.parse("$SERVER_IP/Doctor/Appointments"),
       headers: {
@@ -149,6 +157,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Colors.teal,
           items: <BottomNavigationBarItem>[
@@ -158,7 +167,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.bar_chart),
-              label: 'Statistics',
+              label: S.of(context).statistics,
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.library_books),
@@ -172,7 +181,8 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AccumulatedStatistics(user: user)));
+                        builder: (context) =>
+                            AccumulatedStatistics(user: user)));
                 break;
               case 2:
                 Navigator.of(context).pop();
@@ -210,20 +220,20 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
             SizedBox(
               width: 200,
               child: TextField(
-                onChanged: (input){
-                  _displayDayOfAppointment = _dayOfAppointment
-                      .where((value) =>
-                  value["patientName"].toString().contains(input) ||
-                      value["patientSurname"].toString().contains(input))
-                      .toList();
-                },
+                  onChanged: (input) {
+                    _displayDayOfAppointment = _dayOfAppointment
+                        .where((value) =>
+                            value["patientName"].toString().contains(input) ||
+                            value["patientSurname"].toString().contains(input))
+                        .toList();
+                  },
                   decoration: InputDecoration(
-                contentPadding: EdgeInsets.symmetric(vertical: 10),
-                prefixIcon: Icon(Icons.search),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-                hintText: S.of(context).namesurname,
-              )),
+                    contentPadding: EdgeInsets.symmetric(vertical: 10),
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.0)),
+                    hintText: S.of(context).namesurname,
+                  )),
             ),
           ],
         ),
@@ -274,10 +284,10 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                           setState(() {});
                           break;
                         case 5:
-                        _dayOfAppointment = _appointmentList.getSaturday();
-                        _displayDayOfAppointment = _dayOfAppointment;
-                        setState(() {});
-                        break;
+                          _dayOfAppointment = _appointmentList.getSaturday();
+                          _displayDayOfAppointment = _dayOfAppointment;
+                          setState(() {});
+                          break;
                         case 6:
                           _dayOfAppointment = _appointmentList.getSunday();
                           _displayDayOfAppointment = _dayOfAppointment;
@@ -288,7 +298,8 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        _appointmentList.getDays()[index],
+                        // _appointmentList.getDays()[index],
+                        displayDayOfWeek[index],
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w400,
@@ -313,7 +324,7 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                       color: Color.fromRGBO(87, 136, 141, 0.5019607843137255),
                       spreadRadius: 1)
                 ],
-                border: Border.all(color:Colors.teal, width: 2.0),
+                border: Border.all(color: Colors.teal, width: 2.0),
                 borderRadius: BorderRadius.circular(20.0),
                 color: Colors.white,
               ),
@@ -386,28 +397,30 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                                   return InkWell(
                                     onTap: () {
                                       NewAppointment appointment = NewAppointment(
-                                          patientName: _displayDayOfAppointment[
-                                          index2 - 1]["patientName"],
+                                          patientName:
+                                              _displayDayOfAppointment[index2 - 1]
+                                                  ["patientName"],
                                           patientSurname:
-                                          _displayDayOfAppointment[index2 - 1]
-                                          ["patientSurname"],
+                                              _displayDayOfAppointment[index2 - 1]
+                                                  ["patientSurname"],
                                           phoneNumber:
-                                          _displayDayOfAppointment[index2 - 1]
-                                          ["telephoneNumber"],
+                                              _displayDayOfAppointment[index2 - 1]
+                                                  ["telephoneNumber"],
                                           date:
-                                          "${_displayDayOfAppointment[index2 - 1]["date"]}",
+                                              "${_displayDayOfAppointment[index2 - 1]["date"]}",
                                           time:
-                                          "${_displayDayOfAppointment[index2 - 1]["time"]}",
-                                          length: _displayDayOfAppointment[index2 - 1]
-                                          ["length"],
+                                              "${_displayDayOfAppointment[index2 - 1]["time"]}",
+                                          length:
+                                              _displayDayOfAppointment[index2 - 1]
+                                                  ["length"],
                                           roomNumber:
-                                          _displayDayOfAppointment[index2 - 1]
-                                          ["roomNumber"],
+                                              _displayDayOfAppointment[index2 - 1]
+                                                  ["roomNumber"],
                                           roomSpecialization:
-                                          _displayDayOfAppointment[index2 - 1]
-                                          ["roomSpecialization"],
+                                              _displayDayOfAppointment[index2 - 1]
+                                                  ["roomSpecialization"],
                                           id: _displayDayOfAppointment[index2 - 1]
-                                          ["id"]);
+                                              ["id"]);
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -420,8 +433,8 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
                                     child: Center(
                                       child: SizedBox(
                                           height: 35,
-                                          child: Text(
-                                              _displayDayOfAppointment[index2 - 1]
+                                          child: Text(_displayDayOfAppointment[
+                                                  index2 - 1]
                                               [_columnList[index1]])),
                                     ),
                                   );
@@ -436,13 +449,13 @@ class _ListOfAppointmentsState extends State<ListOfAppointments> {
     );
   }
 
-  _buildTextField(String hintText) {
-    return TextField(
-        decoration: InputDecoration(
-      contentPadding: const EdgeInsets.symmetric(vertical: 10),
-      prefixIcon: const Icon(Icons.search),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-      hintText: hintText,
-    ));
-  }
+// _buildTextField(String hintText) {
+//   return TextField(
+//       decoration: InputDecoration(
+//     contentPadding: const EdgeInsets.symmetric(vertical: 10),
+//     prefixIcon: const Icon(Icons.search),
+//     border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+//     hintText: hintText,
+//   ));
+// }
 }

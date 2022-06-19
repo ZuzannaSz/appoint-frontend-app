@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../generated/l10n.dart';
 import '../model/Doctor.dart';
 import '../model/Office.dart';
 import '../model/User.dart';
@@ -26,11 +27,9 @@ class _AdminPanel extends State<AdminPanel> {
   late ShiftList _shiftList = ShiftList();
   late List _dayOfShifts;
   late int shiftDayInt = 0;
-  late List<Doctor> doctorList = [
-    Doctor(0, "Przemysław", "Grabarek", "ophthalmologist")
-  ];
+  late List<Doctor> doctorList = [];
   late Doctor currentDoctor;
-  late List<Office> officeList = [Office(0, "1")];
+  late List<Office> officeList = [];
   late Office currentOffice;
   late List _displayDayOfShifts = [];
   final List<String> _columnList = [
@@ -41,22 +40,36 @@ class _AdminPanel extends State<AdminPanel> {
     "shiftStart",
     "shiftEnd"
   ];
+  final dayOfWeekDictPL={"Monday":"Poniedziałek",
+"Tuesday":"Wtorek","Wednesday":"Środa",
+  "Thursday":"Czwartek","Friday":"Piątek","Saturday":"Sobota"};
+  String translate(String orgVal){
+    if (locale.toString() == "pl" &&
+        dayOfWeekDictPL.containsKey(orgVal)) {
+      return dayOfWeekDictPL[orgVal].toString();
+    }
+    return orgVal;
+  }
   late User user;
-
+  late Locale locale;
+  @override
+  void didChangeDependencies() {
+    locale = Localizations.localeOf(context);
+    super.didChangeDependencies();
+  }
   TextEditingController officeNumController = TextEditingController();
   TextEditingController specializationController = TextEditingController();
   TextEditingController shiftFromController = TextEditingController();
   TextEditingController shiftToController = TextEditingController();
 
-  List<String> dayList = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday"
+  late List<String> dayList = [
+    S.of(context).monday,
+    S.of(context).tuesday,
+    S.of(context).wednesday,
+    S.of(context).thursday,
+    S.of(context).friday,
+    S.of(context).saturday,
   ];
-
   int indexOfDayList = 0;
 
   List<ScrollController> scrollControllerList = [
@@ -68,24 +81,21 @@ class _AdminPanel extends State<AdminPanel> {
     ScrollController()
   ];
 
-
   @override
   void initState() {
-
     user = widget.user;
-    currentDoctor = doctorList[0];
-    currentOffice = officeList[0];
     initShiftList();
     initOfficeList();
     initDoctorList();
-    for(int i=0;i<scrollControllerList.length;i++){
-      for(int j=0;j<scrollControllerList.length;j++){
-        if(i != j){
+
+    for (int i = 0; i < scrollControllerList.length; i++) {
+      for (int j = 0; j < scrollControllerList.length; j++) {
+        if (i != j) {
           scrollControllerList[i].addListener(() {
-            scrollControllerList[j].animateTo(scrollControllerList[i].offset, duration: Duration(milliseconds: 10), curve: Curves.linear);
+            scrollControllerList[j].animateTo(scrollControllerList[i].offset,
+                duration: Duration(milliseconds: 10), curve: Curves.linear);
           });
         }
-
       }
     }
 
@@ -143,9 +153,7 @@ class _AdminPanel extends State<AdminPanel> {
 
   initShiftList() async {
     _shiftList = await _getShiftList();
-    _dayOfShifts = _shiftList.getDay(DateTime
-        .now()
-        .weekday);
+    _dayOfShifts = _shiftList.getDay(DateTime.now().weekday);
     _displayDayOfShifts = _dayOfShifts;
     setState(() {});
   }
@@ -153,21 +161,22 @@ class _AdminPanel extends State<AdminPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 1,
         backgroundColor: Colors.teal,
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.menu_book),
-            label: 'Schedule',
+            label: S.of(context).schedule,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.admin_panel_settings),
-            label: 'Admin Panel',
+            label: S.of(context).adminPanel,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_box),
-            label: 'Register',
+            label: S.of(context).register,
           ),
         ],
         onTap: (option) {
@@ -176,22 +185,25 @@ class _AdminPanel extends State<AdminPanel> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) =>
-                        ScheduleAppointment(
+                    builder: (context) => ScheduleAppointment(
                           user: user,
                         )));
           } else if (option == 2) {
             Navigator.of(context).pop();
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => RegisterPatient(user: user,)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => RegisterPatient(
+                          user: user,
+                        )));
           }
         },
         selectedItemColor: Colors.white,
       ),
       appBar: AppBar(
         backgroundColor: Colors.teal,
-        title: const Text(
-          "Admin Panel",
+        title: Text(
+          S.of(context).adminPanel,
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -216,8 +228,8 @@ class _AdminPanel extends State<AdminPanel> {
               context: context,
               builder: (BuildContext context) => _buildAddItemDialog(context));
         },
-        child: const Text(
-          "Add Item",
+        child: Text(
+          S.of(context).addItem,
           style: TextStyle(fontSize: 18),
         ),
         style: ButtonStyle(
@@ -225,8 +237,8 @@ class _AdminPanel extends State<AdminPanel> {
             backgroundColor: MaterialStateProperty.all(Colors.teal),
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ))));
+              borderRadius: BorderRadius.circular(20),
+            ))));
   }
 
   ElevatedButton _buildAddOfficeButton(BuildContext context, bool inForm) {
@@ -241,8 +253,8 @@ class _AdminPanel extends State<AdminPanel> {
                 builder: (BuildContext context) => _buildAddOfficeForm());
           }
         },
-        child: const Text(
-          "Add Office",
+        child: Text(
+          S.of(context).addOffice,
           style: TextStyle(fontSize: 16),
         ),
         style: ButtonStyle(
@@ -250,8 +262,8 @@ class _AdminPanel extends State<AdminPanel> {
             backgroundColor: MaterialStateProperty.all(Colors.teal),
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ))));
+              borderRadius: BorderRadius.circular(20),
+            ))));
   }
 
   Widget _buildAddShiftButton(BuildContext context, bool inForm) {
@@ -268,18 +280,17 @@ class _AdminPanel extends State<AdminPanel> {
                   builder: (BuildContext context) => _buildAddShiftForm());
             }
           },
-          child: const Text(
-            "Add Shift",
+          child: Text(
+            S.of(context).addShift,
             style: TextStyle(fontSize: 16),
           ),
           style: ButtonStyle(
               fixedSize: MaterialStateProperty.all(const Size(150, 60)),
-              backgroundColor:
-              MaterialStateProperty.all(Colors.teal),
+              backgroundColor: MaterialStateProperty.all(Colors.teal),
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  )))),
+                borderRadius: BorderRadius.circular(20),
+              )))),
     );
   }
 
@@ -295,8 +306,8 @@ class _AdminPanel extends State<AdminPanel> {
                 builder: (BuildContext context) => _buildAddSpecForm());
           }
         },
-        child: const Text(
-          "Add\nSpecialization",
+        child: Text(
+          S.of(context).addnspecialization,
           style: TextStyle(fontSize: 16),
         ),
         style: ButtonStyle(
@@ -304,8 +315,8 @@ class _AdminPanel extends State<AdminPanel> {
             backgroundColor: MaterialStateProperty.all(Colors.teal),
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ))));
+              borderRadius: BorderRadius.circular(20),
+            ))));
   }
 
   _buildAddItemDialog(BuildContext context) {
@@ -346,18 +357,24 @@ class _AdminPanel extends State<AdminPanel> {
             width: 200,
             child: TextField(
                 onChanged: (input) {
-                  _displayDayOfShifts = _dayOfShifts
-                      .where((value) =>
-                  value["doctorName"].toString().contains(input) ||
-                      value["doctorSurname"].toString().contains(input))
-                      .toList();
+                  if(input.isNotEmpty) {
+                    _displayDayOfShifts = _dayOfShifts
+                        .where((value) =>
+                    value["doctorName"].toString().contains(input) ||
+                        value["doctorSurname"].toString().contains(input))
+                        .toList();
+                  }
+                  else{
+                    _displayDayOfShifts.clear();
+                    _displayDayOfShifts = _dayOfShifts;
+                  }
                 },
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(vertical: 10),
                   prefixIcon: Icon(Icons.search),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20.0)),
-                  hintText: 'name/surname',
+                  hintText: S.of(context).namesurname,
                 )),
           ),
         ),
@@ -425,7 +442,8 @@ class _AdminPanel extends State<AdminPanel> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            _shiftList.getDays()[index],
+                            // _shiftList.getDays()[index],
+                            dayList[index],
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w400,
@@ -443,10 +461,7 @@ class _AdminPanel extends State<AdminPanel> {
         Center(
           child: Container(
               width: 300.0,
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .height * 0.35,
+              height: MediaQuery.of(context).size.height * 0.35,
               decoration: BoxDecoration(
                 boxShadow: const [
                   BoxShadow(
@@ -461,7 +476,6 @@ class _AdminPanel extends State<AdminPanel> {
               ),
               margin: const EdgeInsets.all(16.0),
               child: ListView.builder(
-
                   itemCount: _columnList.length,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index1) {
@@ -481,66 +495,67 @@ class _AdminPanel extends State<AdminPanel> {
                               itemBuilder: (context, index2) {
                                 if (index2 == 0) {
                                   if (index1 == 0) {
-                                    return const Center(
+                                    return Center(
                                       child: SizedBox(
                                           height: 50,
                                           child: Text(
-                                            "Name",
+                                            S.of(context).name,
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold),
                                           )),
                                     );
                                   } else if (index1 == 1) {
-                                    return const Center(
+                                    return Center(
                                       child: SizedBox(
                                           height: 50,
-                                          child: Text("Surname",
+                                          child: Text(S.of(context).surname,
                                               style: TextStyle(
                                                   fontWeight:
-                                                  FontWeight.bold))),
+                                                      FontWeight.bold))),
                                     );
                                   } else if (index1 == 2) {
-                                    return const Center(
+                                    return Center(
                                       child: SizedBox(
                                           height: 50,
-                                          child: Text("Specialization",
+                                          child: Text(
+                                              S.of(context).specialization,
                                               style: TextStyle(
                                                   fontWeight:
-                                                  FontWeight.bold))),
+                                                      FontWeight.bold))),
                                     );
                                   } else if (index1 == 3) {
-                                    return const Center(
+                                    return Center(
                                       child: SizedBox(
                                           height: 50,
-                                          child: Text("Office",
+                                          child: Text(S.of(context).office,
                                               style: TextStyle(
                                                   fontWeight:
-                                                  FontWeight.bold))),
+                                                      FontWeight.bold))),
                                     );
                                   } else if (index1 == 4) {
-                                    return const Center(
+                                    return Center(
                                       child: SizedBox(
                                           height: 50,
-                                          child: Text("Shift start",
+                                          child: Text(S.of(context).shiftStart,
                                               style: TextStyle(
                                                   fontWeight:
-                                                  FontWeight.bold))),
+                                                      FontWeight.bold))),
                                     );
                                   } else {
-                                    return const Center(
+                                    return Center(
                                       child: SizedBox(
                                           height: 50,
-                                          child: Text("Shift End",
+                                          child: Text(S.of(context).shiftEnd,
                                               style: TextStyle(
                                                   fontWeight:
-                                                  FontWeight.bold))),
+                                                      FontWeight.bold))),
                                     );
                                   }
                                 } else if (index1 == 0) {
                                   return Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Padding(
                                         padding: const EdgeInsets.fromLTRB(
@@ -549,12 +564,12 @@ class _AdminPanel extends State<AdminPanel> {
                                           child: Icon(Icons.delete_forever),
                                           onTap: () {
                                             DateTime shiftStart =
-                                            DateTime.parse(
-                                                _displayDayOfShifts[index2 -
-                                                    1][_columnList[4]]);
+                                                DateTime.parse(
+                                                    _displayDayOfShifts[index2 -
+                                                        1][_columnList[4]]);
                                             DateTime shiftEnd = DateTime.parse(
                                                 _displayDayOfShifts[index2 - 1]
-                                                [_columnList[5]]);
+                                                    [_columnList[5]]);
                                             String shiftStartMinutes = "00";
                                             String shiftEndMinutes = "00";
                                             if (shiftStart.minute > 9) {
@@ -562,28 +577,24 @@ class _AdminPanel extends State<AdminPanel> {
                                                   shiftStart.minute.toString();
                                             } else {
                                               shiftStartMinutes =
-                                              "0${shiftStart.minute}";
+                                                  "0${shiftStart.minute}";
                                             }
                                             if (shiftEnd.minute > 9) {
                                               shiftEndMinutes =
                                                   shiftStart.minute.toString();
                                             } else {
                                               shiftEndMinutes =
-                                              "0${shiftEnd.minute}";
+                                                  "0${shiftEnd.minute}";
                                             }
                                             String doctor =
-                                                "${_displayDayOfShifts[index2 -
-                                                1][_columnList[0]]} ${_displayDayOfShifts[index2 -
-                                                1][_columnList[1]]}";
+                                                "${_displayDayOfShifts[index2 - 1][_columnList[0]]} ${_displayDayOfShifts[index2 - 1][_columnList[1]]}";
                                             String shift =
-                                                "${shiftStart
-                                                .hour}:$shiftStartMinutes:00 and ${shiftEnd
-                                                .hour}:$shiftEndMinutes:00";
+                                                "${shiftStart.hour}:$shiftStartMinutes:00 and ${shiftEnd.hour}:$shiftEndMinutes:00";
                                             String day = _shiftList
                                                 .getDays()[index2 - 1];
                                             int shiftId =
-                                            _displayDayOfShifts[index2 - 1]
-                                            ["id"];
+                                                _displayDayOfShifts[index2 - 1]
+                                                    ["id"];
                                             showDeleteConfirmation(context,
                                                 doctor, shift, day, shiftId);
                                           },
@@ -594,17 +605,17 @@ class _AdminPanel extends State<AdminPanel> {
                                             height: 35,
                                             child: Text(
                                                 _displayDayOfShifts[index2 - 1]
-                                                [_columnList[index1]])),
+                                                    [_columnList[index1]])),
                                       ),
                                     ],
                                   );
                                 } else if (index1 == 4 || index1 == 5) {
                                   DateTime shiftStart = DateTime.parse(
                                       _displayDayOfShifts[index2 - 1]
-                                      [_columnList[4]]);
+                                          [_columnList[4]]);
                                   DateTime shiftEnd = DateTime.parse(
                                       _displayDayOfShifts[index2 - 1]
-                                      [_columnList[5]]);
+                                          [_columnList[5]]);
                                   String shiftStartMinutes = "00";
                                   String shiftEndMinutes = "00";
                                   if (shiftStart.minute > 9) {
@@ -622,20 +633,18 @@ class _AdminPanel extends State<AdminPanel> {
 
                                   return Center(
                                       child: SizedBox(
-                                        height: 35,
-                                        child: Text(index1 == 4
-                                            ? "${shiftStart
-                                            .hour}:$shiftStartMinutes:00"
-                                            : "${shiftEnd
-                                            .hour}:$shiftEndMinutes:00"),
-                                      ));
+                                    height: 35,
+                                    child: Text(index1 == 4
+                                        ? "${shiftStart.hour}:$shiftStartMinutes:00"
+                                        : "${shiftEnd.hour}:$shiftEndMinutes:00"),
+                                  ));
                                 } else {
                                   return Center(
                                     child: SizedBox(
                                         height: 35,
                                         child: Text(
                                             _displayDayOfShifts[index2 - 1]
-                                            [_columnList[index1]])),
+                                                [_columnList[index1]])),
                                   );
                                 }
                               }),
@@ -655,65 +664,59 @@ class _AdminPanel extends State<AdminPanel> {
         height: 370,
         child: Center(
             child: Form(
-              child: Column(
-                children: [
-                  _buildExitAppButton(),
-                  const Text("Add Office",
-                      style: TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold)),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
-                    child: Row(
-                      children: [
-                        const Text("Office Number: ",
-                            style: TextStyle(fontSize: 17)),
-                        SizedBox(
-                            width: 60,
-                            height: 30,
-                            child: FormField(
-                                builder: (context) =>
-                                    TextField(
-                                        controller: officeNumController,
-                                        decoration: InputDecoration(
-                                          contentPadding:
-                                          const EdgeInsets.fromLTRB(
-                                              20, 0, 0, 0),
-                                          border: OutlineInputBorder(
-                                              borderRadius:
-                                              BorderRadius.circular(20.0)),
-                                        )))),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  const Text("Specialization: ",
-                      style: TextStyle(fontSize: 17)),
-                  SizedBox(height: 20),
-                  SizedBox(
-                      width: 200,
-                      height: 30,
-                      child: FormField(
-                          builder: (context) =>
-                              TextField(
-                                  controller: specializationController,
-                                  decoration: InputDecoration(
-                                    contentPadding:
-                                    const EdgeInsets.fromLTRB(
-                                        20, 0, 0, 0),
-                                    border: OutlineInputBorder(
-                                        borderRadius:
-                                        BorderRadius.circular(20.0)),
-                                  )))),
-                  SizedBox(
-                    height: 40,
-                  ),
-                  _buildAddOfficeButton(context, true)
-                ],
+          child: Column(
+            children: [
+              _buildExitAppButton(),
+              Text(S.of(context).addOffice,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              const SizedBox(
+                height: 40,
               ),
-            )),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
+                child: Row(
+                  children: [
+                    Text(S.of(context).officeNumber,
+                        style: TextStyle(fontSize: 17)),
+                    SizedBox(
+                        width: 60,
+                        height: 30,
+                        child: FormField(
+                            builder: (context) => TextField(
+                                controller: officeNumController,
+                                decoration: InputDecoration(
+                                  contentPadding:
+                                      const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                                  border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(20.0)),
+                                )))),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
+              Text(S.of(context).specialization2,
+                  style: TextStyle(fontSize: 17)),
+              SizedBox(height: 20),
+              SizedBox(
+                  width: 200,
+                  height: 30,
+                  child: FormField(
+                      builder: (context) => TextField(
+                          controller: specializationController,
+                          decoration: InputDecoration(
+                            contentPadding:
+                                const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0)),
+                          )))),
+              SizedBox(
+                height: 40,
+              ),
+              _buildAddOfficeButton(context, true)
+            ],
+          ),
+        )),
       ),
     );
   }
@@ -728,17 +731,17 @@ class _AdminPanel extends State<AdminPanel> {
           children: [
             _buildExitAppButton(),
             Center(
-                child: const Text(
-                  "Add Shift",
-                  style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
-                )),
+                child: Text(
+              S.of(context).addShift,
+              style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+            )),
             const SizedBox(
               height: 40,
             ),
             Center(
-                child: const Text("Choose Doctor",
+                child: Text(S.of(context).chooseDoctor,
                     style:
-                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
             const SizedBox(
               height: 10,
             ),
@@ -766,9 +769,9 @@ class _AdminPanel extends State<AdminPanel> {
               height: 30,
             ),
             Center(
-                child: Text("Choose Office Room",
+                child: Text(S.of(context).chooseOfficeRoom,
                     style:
-                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
             SizedBox(
               height: 10,
             ),
@@ -794,32 +797,33 @@ class _AdminPanel extends State<AdminPanel> {
             const SizedBox(
               height: 20,
             ),
-            const Center(
-                child: Text("Input Shift",
+            Center(
+                child: Text(S.of(context).inputShift,
                     style:
-                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
             SizedBox(
               height: 10,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Day of shift: "),
+                Text(S.of(context).dayOfShift),
                 DropdownButton(
                     value: indexOfDayList,
                     items: [
                       for (String day in dayList)
                         DropdownMenuItem(
-                            child: Text(day),
-                            value: dayList.indexOf(day))
+                            child: Text(day), value: dayList.indexOf(day))
                     ],
                     onChanged: (index) {
                       if (index is int) {
                         indexOfDayList = index;
                         setState(() {});
                         Navigator.of(context).pop();
-                        showDialog(context: context, builder:
-                            (BuildContext context) => _buildAddShiftForm());
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) =>
+                                _buildAddShiftForm());
                       }
                     }),
               ],
@@ -827,14 +831,12 @@ class _AdminPanel extends State<AdminPanel> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-
-                Text("Start of shift: "),
+                Text(S.of(context).startOfShift),
                 SizedBox(
                     width: 80,
                     height: 30,
                     child: FormField(
-                        builder: (context) =>
-                            TextField(
+                        builder: (context) => TextField(
                               decoration: InputDecoration(hintText: "hh:mm:ss"),
                               controller: shiftFromController,
                             ))),
@@ -846,13 +848,12 @@ class _AdminPanel extends State<AdminPanel> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("End of shift: "),
+                Text(S.of(context).endOfShift),
                 SizedBox(
                     width: 80,
                     height: 30,
                     child: FormField(
-                        builder: (context) =>
-                            TextField(
+                        builder: (context) => TextField(
                               decoration: InputDecoration(hintText: "hh:mm:ss"),
                               controller: shiftToController,
                             ))),
@@ -875,36 +876,34 @@ class _AdminPanel extends State<AdminPanel> {
         height: 270,
         child: Center(
             child: Form(
-              child: Column(
+          child: Column(
+            children: [
+              _buildExitAppButton(),
+              Text(S.of(context).addSpecialization,
+                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
+              const SizedBox(
+                height: 40,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildExitAppButton(),
-                  const Text("Add Specialization",
-                      style: TextStyle(
-                          fontSize: 19, fontWeight: FontWeight.bold)),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("Specialization Name: "),
-                      SizedBox(
-                          width: 70,
-                          height: 30,
-                          child: FormField(
-                              builder: (context) =>
-                                  TextField(
-                                    controller: specializationController,
-                                  ))),
-                    ],
-                  ),
+                  Text(S.of(context).specializationName),
                   SizedBox(
-                    height: 40,
-                  ),
-                  _buildAddSpecButton(context, true)
+                      width: 70,
+                      height: 30,
+                      child: FormField(
+                          builder: (context) => TextField(
+                                controller: specializationController,
+                              ))),
                 ],
               ),
-            )),
+              SizedBox(
+                height: 40,
+              ),
+              _buildAddSpecButton(context, true)
+            ],
+          ),
+        )),
       ),
     );
   }
@@ -928,13 +927,13 @@ class _AdminPanel extends State<AdminPanel> {
       String day, int shiftId) {
     // set up the buttons
     Widget cancelButton = FlatButton(
-      child: Text("Cancel"),
+      child: Text(S.of(context).cancel),
       onPressed: () {
         Navigator.of(context).pop();
       },
     );
     Widget continueButton = FlatButton(
-      child: Text("Confirm"),
+      child: Text(S.of(context).confirm),
       onPressed: () {
         _deleteShift(shiftId);
         Navigator.of(context).pop();
@@ -942,9 +941,14 @@ class _AdminPanel extends State<AdminPanel> {
     );
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Delete Confirmation"),
-      content: Text(
-          "Would you like to delete shift for Dr. $doctor on $day between $shift?"),
+      title: Text(S.of(context).deleteConfirmation),
+      content: Text(S.of(context).wouldYouLikeToDeleteShiftForDr +
+          doctor +
+          S.of(context).on +
+          translate(day) +
+          S.of(context).between +
+          shift +
+          "?"),
       actions: [
         cancelButton,
         continueButton,
@@ -1009,15 +1013,15 @@ class _AdminPanel extends State<AdminPanel> {
   _shiftPostRequest() async {
     DateTime today = DateTime.now();
 
-    while (today.weekday != indexOfDayList+1) {
+    while (today.weekday != indexOfDayList + 1) {
       today = today.add(const Duration(days: 1));
     }
 
-
-    String shiftStart = "${today.year}-${today.month.toString().padLeft(2,'0')}-${today.day.toString().padLeft(2,'0')}T${shiftFromController.text.padLeft(8,'0')}.000Z";
-    String shiftEnd = "${today.year}-${today.month.toString().padLeft(2,'0')}-${today.day.toString().padLeft(2,'0')}T${shiftToController.text.padLeft(8,'0')}.000Z";
-    var response = http.post(
-        Uri.parse('$SERVER_IP/AvailableHours/Register'),
+    String shiftStart =
+        "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}T${shiftFromController.text.padLeft(8, '0')}.000Z";
+    String shiftEnd =
+        "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}T${shiftToController.text.padLeft(8, '0')}.000Z";
+    var response = http.post(Uri.parse('$SERVER_IP/AvailableHours/Register'),
         headers: {
           HttpHeaders.contentTypeHeader: "application/json; charset=utf-8",
           HttpHeaders.authorizationHeader: "Bearer ${user.token}"
@@ -1038,6 +1042,7 @@ class _AdminPanel extends State<AdminPanel> {
     print(response.then((value) => print(value.reasonPhrase)));
     shiftToController.clear();
     shiftFromController.clear();
+    initShiftList();
     setState(() {});
   }
 }

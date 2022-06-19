@@ -75,7 +75,6 @@ class _AppointmentCalendarState extends State<AppointmentCalendar> {
   void initState() {
     user = widget.user;
     speciality = widget.specialityInit;
-    print(speciality);
     language = "Polski";
     date.text = DateTime.now().toString().substring(0, 10);
     _initLanguages();
@@ -110,8 +109,6 @@ class _AppointmentCalendarState extends State<AppointmentCalendar> {
       lang = language;
     }
     String tempDate = date.text;
-    print(spec);
-    print(lang);
     var res = await http.get(
         Uri.parse(
             "$SERVER_IP/Appointment/GetPossibleTerms?Specialization=$spec&date=$tempDate&Length=60&Language=$lang"),
@@ -139,7 +136,6 @@ class _AppointmentCalendarState extends State<AppointmentCalendar> {
     }
 
     appointments.addAll(appointmentsAll);
-    print(appointments[0]);
     dropdownDoctor = [S.of(context).doctor];
     dropdownDoctor.addAll(doctorList);
     setState(() {});
@@ -248,6 +244,7 @@ class _AppointmentCalendarState extends State<AppointmentCalendar> {
   Widget build(BuildContext context) {
     const biggerFont = TextStyle(fontSize: 18);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.teal,
         title: Text(

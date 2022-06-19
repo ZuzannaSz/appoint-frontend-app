@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../generated/l10n.dart';
 import '../model/Medicine.dart';
 import '../model/Patient.dart';
 import '../model/User.dart';
@@ -23,10 +24,15 @@ class AppointmentArchives extends StatefulWidget {
 
 class _AppointmentArchivesState extends State<AppointmentArchives> {
   final String SERVER_IP = 'https://pz-backend2022.herokuapp.com/api';
-  List<ArchivedAppointment> archivedAppointments = [
-    ArchivedAppointment("Jurek", "Kowalski", "26:01:2021", "12:42")
-  ];
+  List<ArchivedAppointment> archivedAppointments = [];
   int patientIndex = 0;
+  late Locale locale;
+
+  @override
+  void didChangeDependencies() {
+    locale = Localizations.localeOf(context);
+    super.didChangeDependencies();
+  }
 
   getArchivedAppointments(int id) async {
     var res = await http.get(
@@ -44,7 +50,7 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
       archivedAppointments.clear();
       List jsonMap = await jsonDecode(res.body);
       print(jsonMap);
-    int index = 0;
+      int index = 0;
       for (var appointment in jsonMap) {
         List<Medicine> medicineList = [];
         for (var medicine in appointment["medicine"]) {
@@ -57,7 +63,7 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
               schedule: medicine["schedule"],
               unit: medicine["timeUnit"]));
         }
-      List patientRemarks =  appointment["patientRemarks"];
+        List patientRemarks = appointment["patientRemarks"];
         archivedAppointments.add(ArchivedAppointment.withDetailedInfo(
             0,
             appointment["patientName"],
@@ -65,18 +71,17 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
             "${appointment["date"]}",
             appointment["length"],
             appointment["wasNecessary"],
-            patientRemarks.isEmpty?"":patientRemarks[index]["remarks"],
+            patientRemarks.isEmpty ? "" : patientRemarks[index]["remarks"],
             appointment["wasPrescriptionIssued"],
             appointment["tookPlace"],
             appointment["visitRemarks"],
             "${appointment["time"]}",
             appointment["roomNumber"],
             medicineList));
-        if(index < patientRemarks.length - 1){
+        if (index < patientRemarks.length - 1) {
           index++;
         }
       }
-
     }
     setState(() {});
   }
@@ -87,6 +92,7 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
   void initState() {
     user = widget.user;
     getPatientList();
+
     super.initState();
   }
 
@@ -114,33 +120,32 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
         patientList.add(Patient.withId(jsonPatient["id"], jsonPatient["name"],
             jsonPatient["surname"], jsonPatient["telephoneNumber"]));
       }
-      patientIndex = patientList[0].id;
+      getArchivedAppointments(patientList[patientIndex].id);
     }
     setState(() {});
   }
 
-  late List<Patient> patientList = [
-    Patient.withId(0, "jurek", "ogorek", "783210056")
-  ];
+  late List<Patient> patientList = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: 2,
           backgroundColor: Colors.teal,
-          items: const <BottomNavigationBarItem>[
+          items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.menu_book),
-              label: 'App. List',
+              label: S.of(context).appList,
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.bar_chart),
-              label: 'Statistics',
+              label: S.of(context).statistics,
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.library_books),
-              label: 'App. History',
+              label: S.of(context).appHistory,
             ),
           ],
           onTap: (option) {
@@ -165,16 +170,16 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
           selectedItemColor: Colors.white),
       appBar: AppBar(
         backgroundColor: Colors.teal,
-        title: const Text(
-          "Appointment History",
+        title: Text(
+          S.of(context).appointmentHistory,
           style: TextStyle(color: Colors.white),
         ),
       ),
       body: Center(
           child: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 0, 50, 0),
+        padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
         child: SizedBox(
-          width: 350.0,
+          width: MediaQuery.of(context).size.width * 0.95,
           height: MediaQuery.of(context).size.height * 0.7,
           child: Column(
             children: [
@@ -187,8 +192,8 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
                     padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
                     child: Row(
                       children: [
-                        const Text(
-                          "Patients: ",
+                        Text(
+                          S.of(context).patients,
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
@@ -211,16 +216,13 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
                                 archivedAppointments.clear();
                                 getArchivedAppointments(patientList[value].id);
                                 patientIndex = value;
-
-
                               }
                             }),
                       ],
                     ),
                   ),
                   decoration: BoxDecoration(
-                    border:
-                        Border.all(color: Colors.teal, width: 2.0),
+                    border: Border.all(color: Colors.teal, width: 2.0),
                     borderRadius: BorderRadius.circular(20.0),
                     color: Colors.white,
                     boxShadow: const [
@@ -239,7 +241,7 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
               SizedBox(
                 height: 370,
                 child: ListView(
-                    padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
                     children: [
                       for (var archApp in archivedAppointments)
                         Padding(
@@ -251,9 +253,10 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           ArchAppointmentStatistics(
-                                              appointment:
-                                                  archApp,
-                                              user: user,),
+                                        appointment: archApp,
+                                        user: user,
+                                        locale: locale,
+                                      ),
                                     ));
                               },
                               child: _buildArchivedVisit(archApp)),
@@ -290,8 +293,8 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
           children: [
             Row(
               children: [
-                const Text(
-                  "Name: ",
+                Text(
+                  S.of(context).name2,
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                 ),
                 Text(
@@ -304,8 +307,8 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
             ),
             Row(
               children: [
-                const Text(
-                  "App. Date:  ",
+                Text(
+                  S.of(context).appDate,
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                 ),
                 Text(archivedAppointment.date, style: TextStyle(fontSize: 17))
@@ -316,8 +319,8 @@ class _AppointmentArchivesState extends State<AppointmentArchives> {
             ),
             Row(
               children: [
-                const Text(
-                  "App. Time:  ",
+                Text(
+                  S.of(context).appTime,
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                 ),
                 Text(archivedAppointment.time, style: TextStyle(fontSize: 17))

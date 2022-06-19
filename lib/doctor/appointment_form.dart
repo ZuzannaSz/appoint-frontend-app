@@ -40,12 +40,19 @@ class _AppointmentFormState extends State<AppointmentForm> {
         schedule: "",
         unit: "")
   ];
+  final dosageDict = {
+    "a day": "dziennie",
+    "a week": "tygodniowo",
+    "a month": "na miesiąc",
+    "a year": "na rok"
+  };
   final String SERVER_IP = 'https://pz-backend2022.herokuapp.com/api';
   late List<Medicine> chosenMedicineList = [];
   late List<TextEditingController> dosageList = [];
   late List<String> unitList = [];
   late List<String> scheduleList = [];
   late User user;
+  late Locale locale;
 
   final TextEditingController _visitRemarksController = TextEditingController();
 
@@ -53,6 +60,13 @@ class _AppointmentFormState extends State<AppointmentForm> {
       TextEditingController();
 
   final TextEditingController _medicineNameController = TextEditingController();
+
+  String translateDosage(String dbValue) {
+    if (locale.toString() == "pl" && dosageDict.containsKey(dbValue)) {
+      return dosageDict[dbValue].toString();
+    }
+    return dbValue;
+  }
 
   @override
   void initState() {
@@ -62,11 +76,18 @@ class _AppointmentFormState extends State<AppointmentForm> {
   }
 
   @override
+  void didChangeDependencies() {
+    locale = Localizations.localeOf(context);
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     int itemsCount = medicineList.length > chosenMedicineList.length
         ? medicineList.length
         : chosenMedicineList.length;
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         bottomNavigationBar: BottomNavigationBar(
             backgroundColor: Colors.teal,
             items: <BottomNavigationBarItem>[
@@ -339,7 +360,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
       for (var data in chosenMedicineList)
         DataRow(cells: [
           DataCell(Text(data.name)),
-          DataCell(Text("${data.doses} ${data.unit} ${data.schedule}")),
+          DataCell(Text(
+              "${data.doses} ${data.unit} ${translateDosage(data.schedule)}")),
         ]),
     ]);
   }
@@ -592,6 +614,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
           )),
     );
   }
+
   getMedicineList() async {
     var res = await http.get(Uri.parse("$SERVER_IP/Drug/GetAll"),
         headers: {HttpHeaders.authorizationHeader: "Bearer " + user.token});
@@ -617,6 +640,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
       setState(() {});
     }
   }
+
   _buildRecord(int index) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
@@ -747,7 +771,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                           padding: const EdgeInsets.fromLTRB(90, 0, 90, 0),
                           child: ElevatedButton(
                               onPressed: () {
-                                if(_medicineNameController.text.isNotEmpty){
+                                if (_medicineNameController.text.isNotEmpty) {
                                   chosenMedicineList.add(Medicine.full(
                                       id: -1,
                                       doses: 0,
@@ -757,9 +781,9 @@ class _AppointmentFormState extends State<AppointmentForm> {
                                       schedule: "a day",
                                       unit: "ml"));
                                   Navigator.of(context).pop();
-                                }else
-                                  _showMissingInputError("Medicine Name", context);
-
+                                } else
+                                  _showMissingInputError(
+                                      "Medicine Name", context);
                               },
                               style: ButtonStyle(
                                   fixedSize: MaterialStateProperty.all(
@@ -806,9 +830,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
     List medicineMapList = [];
     Map medicineMap = {};
     for (Medicine med in chosenMedicineList) {
-      if(med.id != -1){
+      if (med.id != -1) {
         medicineMap.putIfAbsent("id", () => med.id);
-
       }
       medicineMap.putIfAbsent("name", () => med.name);
       medicineMap.putIfAbsent("dosage", () => med.doses);
@@ -833,9 +856,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
         }));
     print(response.reasonPhrase);
     print(response.statusCode);
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   _buildDosageRecord(int index) {
@@ -911,7 +932,6 @@ class _AppointmentFormState extends State<AppointmentForm> {
     );
   }
 
-
   _showMissingInputError(String missingInput, BuildContext context) {
     showDialog(
         context: context,
@@ -934,8 +954,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
                       backgroundColor: MaterialStateProperty.all(Colors.teal),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ))),
+                        borderRadius: BorderRadius.circular(20),
+                      ))),
                   child: Text(S.of(context).ok),
                   onPressed: () {
                     Navigator.of(context).pop();

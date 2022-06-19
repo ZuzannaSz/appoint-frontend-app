@@ -87,16 +87,11 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
       print(jsonResponse);
 
       for (var record in jsonResponse) {
-        _patientList.add(Patient.withId(record["id"],
-            record["name"], record["surname"], record["telephoneNumber"]));
+        _patientList.add(Patient.withId(record["id"], record["name"],
+            record["surname"], record["telephoneNumber"]));
       }
       _displayPatientList = _patientList;
-      print(_patientList[0]);
       setState(() {});
-      // for (var member in jsonResponse["board"]["members"]) {
-      //   if (member["email"] == user.email) user.name = member["name"];
-      //   table.members.add(member["email"]);
-      // }
     }
   }
 
@@ -148,10 +143,6 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
             HttpHeaders.authorizationHeader: "Bearer " + user.token
           },
           body: tmp);
-
-      print(tmp);
-      print(_patientList[chosenRecord].id);
-      print(duration);
       print("${_dateController.text}T${_timeController.text}.000Z");
       print(response.then((value) => value.statusCode == 200
           ? ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -162,14 +153,15 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
               content: Text(S.of(context).errorSavingVisit),
               duration: Duration(seconds: 1),
             ))));
-      _dateController.text="";
-      _timeController.text="";
-      patientName.text="";
-      doctorName.text="";
-      doctorId=-1;
+      _dateController.text = "";
+      _timeController.text = "";
+      patientName.text = "";
+      doctorName.text = "";
+      doctorId = -1;
     }
 
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         bottomNavigationBar: BottomNavigationBar(
             backgroundColor: Colors.teal,
             items: <BottomNavigationBarItem>[
@@ -179,7 +171,7 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.admin_panel_settings),
-                label: 'Admin Panel',
+                label: S.of(context).adminPanel,
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.account_box),
@@ -189,13 +181,18 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
             onTap: (option) {
               if (option == 2) {
                 Navigator.of(context).pop();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => RegisterPatient(user: user,)));
-              }
-              else if (option == 1) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => RegisterPatient(
+                              user: user,
+                            )));
+              } else if (option == 1) {
                 Navigator.of(context).pop();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AdminPanel(user:user)));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AdminPanel(user: user)));
               }
             },
             selectedItemColor: Colors.white),
@@ -358,7 +355,6 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
                       doctorName.text = calendarResult["doctorName"];
                       roomId = calendarResult["room"];
                       duration = calendarResult["duration"];
-                      print(calendarResult);
                     });
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -558,12 +554,23 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
 
   _buildTextField(String hintText) {
     return TextField(
+        onChanged: (input) {
+          if (input.isNotEmpty) {
+            _patientList = _patientList
+                .where((value) =>
+                    value.name.contains(input) || value.surname.contains(input))
+                .toList();
+          } else {
+            _patientList.clear();
+            _getPatientList();
+          }
+        },
         decoration: InputDecoration(
-      contentPadding: const EdgeInsets.symmetric(vertical: 10),
-      prefixIcon: const Icon(Icons.search),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-      hintText: hintText,
-    ));
+          contentPadding: const EdgeInsets.symmetric(vertical: 10),
+          prefixIcon: const Icon(Icons.search),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+          hintText: hintText,
+        ));
   }
 
   Widget _buildAddPatient(context, index) {
@@ -571,8 +578,12 @@ class _ScheduleAppointment extends State<ScheduleAppointment> {
       key: const Key("add patient ink"),
       onTap: () {
         Navigator.of(context).pop();
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => RegisterPatient(user: user,)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => RegisterPatient(
+                      user: user,
+                    )));
       },
       child: Container(
         decoration:

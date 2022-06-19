@@ -1029,6 +1029,696 @@ class S {
       args: [],
     );
   }
+
+  /// `The phone number is in a wrong format`
+  String get thePhoneNumberIsInAWrongFormat {
+    return Intl.message(
+      'The phone number is in a wrong format',
+      name: 'thePhoneNumberIsInAWrongFormat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Monday`
+  String get monday {
+    return Intl.message(
+      'Monday',
+      name: 'monday',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tuesday`
+  String get tuesday {
+    return Intl.message(
+      'Tuesday',
+      name: 'tuesday',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wednesday`
+  String get wednesday {
+    return Intl.message(
+      'Wednesday',
+      name: 'wednesday',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Thursday`
+  String get thursday {
+    return Intl.message(
+      'Thursday',
+      name: 'thursday',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Friday`
+  String get friday {
+    return Intl.message(
+      'Friday',
+      name: 'friday',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Saturday`
+  String get saturday {
+    return Intl.message(
+      'Saturday',
+      name: 'saturday',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sunday`
+  String get sunday {
+    return Intl.message(
+      'Sunday',
+      name: 'sunday',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Statistics`
+  String get statistics {
+    return Intl.message(
+      'Statistics',
+      name: 'statistics',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `January`
+  String get january {
+    return Intl.message(
+      'January',
+      name: 'january',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `February`
+  String get february {
+    return Intl.message(
+      'February',
+      name: 'february',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `March`
+  String get march {
+    return Intl.message(
+      'March',
+      name: 'march',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `April`
+  String get april {
+    return Intl.message(
+      'April',
+      name: 'april',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `May`
+  String get may {
+    return Intl.message(
+      'May',
+      name: 'may',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `June`
+  String get june {
+    return Intl.message(
+      'June',
+      name: 'june',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `July`
+  String get july {
+    return Intl.message(
+      'July',
+      name: 'july',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `August`
+  String get august {
+    return Intl.message(
+      'August',
+      name: 'august',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `September`
+  String get september {
+    return Intl.message(
+      'September',
+      name: 'september',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `October`
+  String get october {
+    return Intl.message(
+      'October',
+      name: 'october',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `November`
+  String get november {
+    return Intl.message(
+      'November',
+      name: 'november',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `December`
+  String get december {
+    return Intl.message(
+      'December',
+      name: 'december',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Appointments Statistics`
+  String get appointmentsStatistics {
+    return Intl.message(
+      'Appointments Statistics',
+      name: 'appointmentsStatistics',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose Month and Year: `
+  String get chooseMonthAndYear {
+    return Intl.message(
+      'Choose Month and Year: ',
+      name: 'chooseMonthAndYear',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sex`
+  String get sex {
+    return Intl.message(
+      'Sex',
+      name: 'sex',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Visit Duration`
+  String get visitDuration {
+    return Intl.message(
+      'Visit Duration',
+      name: 'visitDuration',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Prescription Issued?`
+  String get prescriptionIssued {
+    return Intl.message(
+      'Prescription Issued?',
+      name: 'prescriptionIssued',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Most Prescribed Medicine`
+  String get mostPrescribedMedicine {
+    return Intl.message(
+      'Most Prescribed Medicine',
+      name: 'mostPrescribedMedicine',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `male`
+  String get male {
+    return Intl.message(
+      'male',
+      name: 'male',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `female`
+  String get female {
+    return Intl.message(
+      'female',
+      name: 'female',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yes`
+  String get yes {
+    return Intl.message(
+      'Yes',
+      name: 'yes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Patients: `
+  String get patients {
+    return Intl.message(
+      'Patients: ',
+      name: 'patients',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Name: `
+  String get name2 {
+    return Intl.message(
+      'Name: ',
+      name: 'name2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `App. Time: `
+  String get appTime {
+    return Intl.message(
+      'App. Time: ',
+      name: 'appTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Surname: `
+  String get surname2 {
+    return Intl.message(
+      'Surname: ',
+      name: 'surname2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Phone number: `
+  String get phoneNumber2 {
+    return Intl.message(
+      'Phone number: ',
+      name: 'phoneNumber2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Visit time: `
+  String get visitTime2 {
+    return Intl.message(
+      'Visit time: ',
+      name: 'visitTime2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Visit duration: `
+  String get visitDuration2 {
+    return Intl.message(
+      'Visit duration: ',
+      name: 'visitDuration2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Took place?: `
+  String get tookPlace {
+    return Intl.message(
+      'Took place?: ',
+      name: 'tookPlace',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Was urgent?: `
+  String get wasUrgent2 {
+    return Intl.message(
+      'Was urgent?: ',
+      name: 'wasUrgent2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Was Receipt Given?: `
+  String get wasReceiptGiven2 {
+    return Intl.message(
+      'Was Receipt Given?: ',
+      name: 'wasReceiptGiven2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remarks about visit: `
+  String get remarksAboutVisit {
+    return Intl.message(
+      'Remarks about visit: ',
+      name: 'remarksAboutVisit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remarks about patient: `
+  String get remarksAboutPatient {
+    return Intl.message(
+      'Remarks about patient: ',
+      name: 'remarksAboutPatient',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Item`
+  String get addItem {
+    return Intl.message(
+      'Add Item',
+      name: 'addItem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Office`
+  String get addOffice {
+    return Intl.message(
+      'Add Office',
+      name: 'addOffice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Shift`
+  String get addShift {
+    return Intl.message(
+      'Add Shift',
+      name: 'addShift',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add\nSpeciality`
+  String get addnspecialization {
+    return Intl.message(
+      'Add\nSpeciality',
+      name: 'addnspecialization',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Speciality`
+  String get specialization {
+    return Intl.message(
+      'Speciality',
+      name: 'specialization',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Office`
+  String get office {
+    return Intl.message(
+      'Office',
+      name: 'office',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Shift start`
+  String get shiftStart {
+    return Intl.message(
+      'Shift start',
+      name: 'shiftStart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Shift End`
+  String get shiftEnd {
+    return Intl.message(
+      'Shift End',
+      name: 'shiftEnd',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Office Number: `
+  String get officeNumber {
+    return Intl.message(
+      'Office Number: ',
+      name: 'officeNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Speciality: `
+  String get specialization2 {
+    return Intl.message(
+      'Speciality: ',
+      name: 'specialization2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose Doctor`
+  String get chooseDoctor {
+    return Intl.message(
+      'Choose Doctor',
+      name: 'chooseDoctor',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose Office Room`
+  String get chooseOfficeRoom {
+    return Intl.message(
+      'Choose Office Room',
+      name: 'chooseOfficeRoom',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Input Shift`
+  String get inputShift {
+    return Intl.message(
+      'Input Shift',
+      name: 'inputShift',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Day of shift: `
+  String get dayOfShift {
+    return Intl.message(
+      'Day of shift: ',
+      name: 'dayOfShift',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start of shift: `
+  String get startOfShift {
+    return Intl.message(
+      'Start of shift: ',
+      name: 'startOfShift',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `End of shift: `
+  String get endOfShift {
+    return Intl.message(
+      'End of shift: ',
+      name: 'endOfShift',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Speciality`
+  String get addSpecialization {
+    return Intl.message(
+      'Add Speciality',
+      name: 'addSpecialization',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Speciality Name: `
+  String get specializationName {
+    return Intl.message(
+      'Speciality Name: ',
+      name: 'specializationName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm`
+  String get confirm {
+    return Intl.message(
+      'Confirm',
+      name: 'confirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete Confirmation`
+  String get deleteConfirmation {
+    return Intl.message(
+      'Delete Confirmation',
+      name: 'deleteConfirmation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Would you like to delete shift for Dr. `
+  String get wouldYouLikeToDeleteShiftForDr {
+    return Intl.message(
+      'Would you like to delete shift for Dr. ',
+      name: 'wouldYouLikeToDeleteShiftForDr',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// ` on `
+  String get on {
+    return Intl.message(
+      ' on ',
+      name: 'on',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// ` between `
+  String get between {
+    return Intl.message(
+      ' between ',
+      name: 'between',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `doctorName`
+  String get doctorname {
+    return Intl.message(
+      'doctorName',
+      name: 'doctorname',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `doctorSurname`
+  String get doctorsurname {
+    return Intl.message(
+      'doctorSurname',
+      name: 'doctorsurname',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `shiftStart`
+  String get shiftstart {
+    return Intl.message(
+      'shiftStart',
+      name: 'shiftstart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `shiftEnd`
+  String get shiftend {
+    return Intl.message(
+      'shiftEnd',
+      name: 'shiftend',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

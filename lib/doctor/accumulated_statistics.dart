@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_charts/charts.dart';
 
+import '../generated/l10n.dart';
 import '../model/User.dart';
 import 'appointment_archives.dart';
 import 'list_of_appointments.dart';
@@ -20,21 +21,20 @@ class AccumulatedStatistics extends StatefulWidget {
 class _AccumulatedStatisticsState extends State<AccumulatedStatistics> {
   late User user;
   static const String SERVER_IP = 'https://pz-backend2022.herokuapp.com/api';
-  List<String> monthList = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    'December'
+  late List<String> monthList = [
+    S.of(context).january,
+    S.of(context).february,
+    S.of(context).march,
+    S.of(context).april,
+    S.of(context).may,
+    S.of(context).june,
+    S.of(context).july,
+    S.of(context).august,
+    S.of(context).september,
+    S.of(context).october,
+    S.of(context).november,
+    S.of(context).december
   ];
-
   List<int> yearList = [2021, 2022];
   int chosenMonth = 0;
   int chosenYear = 2021;
@@ -60,22 +60,24 @@ class _AccumulatedStatisticsState extends State<AccumulatedStatistics> {
 
   @override
   Widget build(BuildContext context) {
+    _getStatistics(chosenMonth, chosenYear);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: 1,
           backgroundColor: Colors.teal,
-          items: const <BottomNavigationBarItem>[
+          items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.menu_book),
-              label: 'App. List',
+              label: S.of(context).appList,
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.bar_chart),
-              label: 'Statistics',
+              label: S.of(context).statistics,
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.library_books),
-              label: 'App. History',
+              label: S.of(context).appHistory,
             ),
           ],
           onTap: (option) {
@@ -103,8 +105,8 @@ class _AccumulatedStatisticsState extends State<AccumulatedStatistics> {
           selectedItemColor: Colors.white),
       appBar: AppBar(
         backgroundColor: Colors.teal,
-        title: const Text(
-          "Appointments Statistics",
+        title: Text(
+          S.of(context).appointmentsStatistics,
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -114,11 +116,11 @@ class _AccumulatedStatisticsState extends State<AccumulatedStatistics> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+              padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
               child: Column(
                 children: [
                   Text(
-                    "Choose Month and Year: ",
+                    S.of(context).chooseMonthAndYear,
                     style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500),
                   ),
                   Padding(
@@ -201,19 +203,17 @@ class _AccumulatedStatisticsState extends State<AccumulatedStatistics> {
 
   _buildAccumulativeStatistics(BuildContext context) {
     return [
-      const Text(
-        "Appointments Statistics",
+      Text(
+        S.of(context).appointmentsStatistics,
         style: TextStyle(
-            color: Colors.teal,
-            fontSize: 24,
-            fontWeight: FontWeight.bold),
+            color: Colors.teal, fontSize: 24, fontWeight: FontWeight.bold),
       ),
       const SizedBox(
         height: 20,
       ),
       SfCircularChart(
           title: ChartTitle(
-              text: 'Sex',
+              text: S.of(context).sex,
               alignment: ChartAlignment.near,
               textStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 19)),
           legend: Legend(isVisible: true),
@@ -229,7 +229,7 @@ class _AccumulatedStatisticsState extends State<AccumulatedStatistics> {
           ]),
       SfCircularChart(
           title: ChartTitle(
-              text: 'Visit Duration',
+              text: S.of(context).visitDuration,
               alignment: ChartAlignment.near,
               textStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 19)),
           legend: Legend(isVisible: true),
@@ -245,7 +245,7 @@ class _AccumulatedStatisticsState extends State<AccumulatedStatistics> {
           ]),
       SfCircularChart(
           title: ChartTitle(
-              text: 'Prescription Issued?',
+              text: S.of(context).prescriptionIssued,
               alignment: ChartAlignment.near,
               textStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 19)),
           legend: Legend(isVisible: true),
@@ -261,7 +261,7 @@ class _AccumulatedStatisticsState extends State<AccumulatedStatistics> {
           ]),
       SfCircularChart(
           title: ChartTitle(
-              text: 'Most Prescribed Medicine',
+              text: S.of(context).mostPrescribedMedicine,
               alignment: ChartAlignment.near,
               textStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 19)),
           legend: Legend(isVisible: true),
@@ -307,8 +307,10 @@ class _AccumulatedStatisticsState extends State<AccumulatedStatistics> {
       }
 
       sexPieData = [
-        _PieData("male", men, "${((men) / (women + men) * 100).ceil()}%"),
-        _PieData("female", women, "${((women) / (women + men) * 100).ceil()}%"),
+        _PieData(S.of(context).male, men,
+            "${((men) / (women + men) * 100).ceil()}%"),
+        _PieData(S.of(context).female, women,
+            "${((women) / (women + men) * 100).ceil()}%"),
       ];
       int dur60 = durations['60']?.toInt() ?? 100;
       int dur40 = durations['40']?.toInt() ?? 200;
@@ -322,9 +324,9 @@ class _AccumulatedStatisticsState extends State<AccumulatedStatistics> {
             "${((dur20) / (dur20 + dur40 + dur60) * 100).ceil()}%"),
       ];
       receiptGivenPieData = [
-        _PieData("Yes", prescriptionsIssuead,
+        _PieData(S.of(context).yes, prescriptionsIssuead,
             "${((prescriptionsIssuead / visits) * 100).ceil()}%"),
-        _PieData("No", visits - prescriptionsIssuead,
+        _PieData(S.of(context).no, visits - prescriptionsIssuead,
             "${(((visits - prescriptionsIssuead) / visits) * 100).ceil()}%"),
       ];
       int allMedicineCount = 0;

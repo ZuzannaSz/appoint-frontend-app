@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../generated/l10n.dart';
-import '../model/Patient.dart';
 import '../model/User.dart';
 import 'appointment_archives.dart';
 import 'list_of_appointments.dart';
@@ -14,15 +13,16 @@ class AppointmentStatistics extends StatelessWidget {
   late NewAppointment appointment;
   late bool archived;
 
-  AppointmentStatistics(
-      {Key? key,
-      required this.appointment,
-      required this.user,})
-      : super(key: key);
+  AppointmentStatistics({
+    Key? key,
+    required this.appointment,
+    required this.user,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Colors.teal,
           items: <BottomNavigationBarItem>[
@@ -80,9 +80,7 @@ class AppointmentStatistics extends StatelessWidget {
       Text(
         S.of(context).generalInformation,
         style: const TextStyle(
-            color: Colors.teal,
-            fontSize: 24,
-            fontWeight: FontWeight.bold),
+            color: Colors.teal, fontSize: 24, fontWeight: FontWeight.bold),
       ),
       const SizedBox(
         height: 20,
@@ -172,34 +170,32 @@ class AppointmentStatistics extends StatelessWidget {
       const SizedBox(
         height: 60,
       ),
-          Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 60, 0),
-              child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AppointmentForm(
-                                  user: user,
-                                  appointment:
-                                      ArchivedAppointment.fromNewAppointment(
-                                          appointment),
-                                )));
-                  },
-                  child: Text(
-                    S.of(context).appForm,
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  style: ButtonStyle(
-                      fixedSize: MaterialStateProperty.all(const Size(60, 60)),
-                      backgroundColor:
-                          MaterialStateProperty.all(Colors.teal),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      )))),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(0, 0, 60, 0),
+        child: ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AppointmentForm(
+                            user: user,
+                            appointment: ArchivedAppointment.fromNewAppointment(
+                                appointment),
+                          )));
+            },
+            child: Text(
+              S.of(context).appForm,
+              style: TextStyle(fontSize: 18),
             ),
+            style: ButtonStyle(
+                fixedSize: MaterialStateProperty.all(const Size(60, 60)),
+                backgroundColor: MaterialStateProperty.all(Colors.teal),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                )))),
+      ),
       const SizedBox(
         height: 80,
       ),

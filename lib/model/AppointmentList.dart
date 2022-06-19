@@ -1,67 +1,55 @@
-
-
 class AppointmentList {
   Map appointmentMap = {
-    "Monday": [
-      {
-        "id": 16,
-        "date": "2022-05-16",
-        "time": "09:37:58",
-        "length": 60,
-        "patientName": "Testo",
-        "patientSurname": "Testo-Testingowy",
-        "telephoneNumber": "123456789",
-        "roomNumber": "Testow i Badan",
-        "roomSpecialization" : "Jak sama nazwa wskazuje"
-        }
-    ],
-    "Tuesday": [
-
-    ],
-    "Wednesday": [
-
-    ],
-    "Thursday": [
-
-    ],
-    "Friday": [
-  
-    ]
+    "Monday": [],
+    "Tuesday": [],
+    "Wednesday": [],
+    "Thursday": [],
+    "Friday": []
   };
-  List getDays(){
+
+  List getDays() {
     return appointmentMap.keys.toList();
   }
-  List getMonday(){
+
+  List getMonday() {
     return appointmentMap["Monday"];
   }
-  List getTuesday(){
+
+  List getTuesday() {
     return appointmentMap["Tuesday"];
   }
-  List getWednesday(){
+
+  List getWednesday() {
     return appointmentMap["Wednesday"];
   }
-  List getThursday(){
+
+  List getThursday() {
     return appointmentMap["Thursday"];
   }
-  List getFriday(){
+
+  List getFriday() {
     return appointmentMap["Friday"];
   }
-  List getSaturday(){
+
+  List getSaturday() {
     return appointmentMap["Saturday"];
   }
-  List getSunday(){
+
+  List getSunday() {
     return appointmentMap["Sunday"];
   }
-  setAppointmentMap(map){
+
+  setAppointmentMap(map) {
     assert(map != null);
     appointmentMap = map;
   }
-  int length(){
+
+  int length() {
     return appointmentMap.length;
   }
 
   List getDay(int weekday) {
-    switch(weekday){
+    switch (weekday) {
       case 0:
         return getMonday();
       case 1:
@@ -75,6 +63,5 @@ class AppointmentList {
       default:
         return getMonday();
     }
-
   }
 }

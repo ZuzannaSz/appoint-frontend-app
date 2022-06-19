@@ -3,25 +3,45 @@ import 'package:appoint_webapp/model/Medicine.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../generated/l10n.dart';
 import '../model/User.dart';
-import 'appointment_archives.dart';
-import 'list_of_appointments.dart';
 
 class ArchAppointmentStatistics extends StatelessWidget {
   late ArchivedAppointment appointment;
   late User user;
-  ArchAppointmentStatistics({Key? key, required this.appointment, required this.user})
+  late Locale locale;
+
+  ArchAppointmentStatistics(
+      {Key? key,
+      required this.appointment,
+      required this.user,
+      required this.locale})
       : super(key: key);
+
+  final dosageDict = {
+    "a day": "dziennie",
+    "a week": "tygodniowo",
+    "a month": "na miesiąc",
+    "a year": "na rok"
+  };
+
+  String translateDosage(String dbValue) {
+    if (locale.toString() == "pl" && dosageDict.containsKey(dbValue)) {
+      return dosageDict[dbValue].toString();
+    }
+    return dbValue;
+  }
 
   @override
   Widget build(BuildContext context) {
     List<Medicine> medicineList = appointment.prescriptionMeds;
+
     appointment = ArchivedAppointment.withDetailedInfo(
-      1,
+        1,
         appointment.patientName,
         appointment.patientSurname,
         appointment.date,
-       appointment.duration,
+        appointment.duration,
         appointment.necessary,
         appointment.patientRemarks,
         appointment.receiptGiven,
@@ -31,10 +51,11 @@ class ArchAppointmentStatistics extends StatelessWidget {
         appointment.phoneNumber,
         medicineList);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.teal,
-        title: const Text(
-          "Patient Statistics",
+        title: Text(
+          S.of(context).patientStatistics,
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -54,20 +75,18 @@ class ArchAppointmentStatistics extends StatelessWidget {
       const SizedBox(
         height: 40,
       ),
-      const Text(
-        "General Information",
+      Text(
+        S.of(context).generalInformation,
         style: TextStyle(
-            color: Colors.teal,
-            fontSize: 24,
-            fontWeight: FontWeight.bold),
+            color: Colors.teal, fontSize: 24, fontWeight: FontWeight.bold),
       ),
       const SizedBox(
         height: 20,
       ),
       Row(
         children: [
-          const Text(
-            "Name: ",
+          Text(
+            S.of(context).name2,
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           Text(appointment.patientName, style: const TextStyle(fontSize: 17)),
@@ -78,8 +97,8 @@ class ArchAppointmentStatistics extends StatelessWidget {
       ),
       Row(
         children: [
-          const Text(
-            "Surname: ",
+          Text(
+            S.of(context).surname2,
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           Text(appointment.patientSurname, style: TextStyle(fontSize: 17)),
@@ -90,8 +109,8 @@ class ArchAppointmentStatistics extends StatelessWidget {
       ),
       Row(
         children: [
-          const Text(
-            "Phone number: ",
+          Text(
+            S.of(context).phoneNumber2,
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           Text(appointment.phoneNumber, style: TextStyle(fontSize: 17)),
@@ -102,8 +121,8 @@ class ArchAppointmentStatistics extends StatelessWidget {
       ),
       Row(
         children: [
-          const Text(
-            "Visit date: ",
+          Text(
+            S.of(context).visitDate,
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           Text(appointment.date, style: TextStyle(fontSize: 17)),
@@ -114,8 +133,8 @@ class ArchAppointmentStatistics extends StatelessWidget {
       ),
       Row(
         children: [
-          const Text(
-            "Visit time: ",
+          Text(
+            S.of(context).visitTime2,
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           Text(appointment.time, style: TextStyle(fontSize: 17)),
@@ -126,8 +145,8 @@ class ArchAppointmentStatistics extends StatelessWidget {
       ),
       Row(
         children: [
-          const Text(
-            "Visit duration: ",
+          Text(
+            S.of(context).visitDuration2,
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           Text(appointment.duration.toString(), style: TextStyle(fontSize: 17)),
@@ -139,10 +158,10 @@ class ArchAppointmentStatistics extends StatelessWidget {
       Row(
         children: [
           Text(
-            "Took place?: ",
+            S.of(context).tookPlace,
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
-          Text(appointment.tookPlace ? "Yes" : "No",
+          Text(appointment.tookPlace ? S.of(context).yes : S.of(context).no,
               style: TextStyle(fontSize: 17)),
         ],
       ),
@@ -152,10 +171,10 @@ class ArchAppointmentStatistics extends StatelessWidget {
       Row(
         children: [
           Text(
-            "Was urgent?: ",
+            S.of(context).wasUrgent2,
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
-          Text(appointment.necessary ? "Yes" : "No",
+          Text(appointment.necessary ? S.of(context).yes : S.of(context).no,
               style: TextStyle(fontSize: 17)),
         ],
       ),
@@ -165,17 +184,17 @@ class ArchAppointmentStatistics extends StatelessWidget {
       Row(
         children: [
           Text(
-            "Was Receipt Given?: ",
+            S.of(context).wasReceiptGiven2,
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
-          Text(appointment.receiptGiven ? "Yes" : "No",
+          Text(appointment.receiptGiven ? S.of(context).yes : S.of(context).no,
               style: TextStyle(fontSize: 17)),
         ],
       ),
       const SizedBox(
         height: 20,
       ),
-      _medicineTable(appointment.prescriptionMeds.length),
+      _medicineTable(appointment.prescriptionMeds.length, context),
       const SizedBox(
         height: 20,
       ),
@@ -183,8 +202,8 @@ class ArchAppointmentStatistics extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(0, 0, 80, 0),
         child: Column(
           children: [
-            const Text(
-              "Remarks about visit: ",
+            Text(
+              S.of(context).remarksAboutVisit,
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
             ),
             const SizedBox(
@@ -201,8 +220,8 @@ class ArchAppointmentStatistics extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(0, 0, 80, 0),
         child: Column(
           children: [
-            const Text(
-              "Remarks about patient: ",
+            Text(
+              S.of(context).remarksAboutPatient,
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
             ),
             const SizedBox(
@@ -218,15 +237,15 @@ class ArchAppointmentStatistics extends StatelessWidget {
     ];
   }
 
-  _medicineTable(int itemCount) {
+  _medicineTable(int itemCount, dynamic context) {
     return DataTable(columns: <DataColumn>[
-      const DataColumn(
-        label: Text('Name'),
+      DataColumn(
+        label: Text(S.of(context).nameDrug),
       ),
       DataColumn(
         label: Row(
           children: [
-            Text('Doses'),
+            Text(S.of(context).doses),
             SizedBox(
               width: 20,
             ),
@@ -237,7 +256,8 @@ class ArchAppointmentStatistics extends StatelessWidget {
       for (var data in appointment.prescriptionMeds)
         DataRow(cells: [
           DataCell(Text(data.name)),
-          DataCell(Text("${data.doses} ${data.unit} ${data.schedule}")),
+          DataCell(Text(
+              "${data.doses} ${data.unit} ${translateDosage(data.schedule)}")),
         ]),
     ]);
   }

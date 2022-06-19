@@ -101,6 +101,7 @@ class _CancelAppointment extends State<CancelAppointment> {
   Widget build(BuildContext context) {
     const biggerFont = TextStyle(fontSize: 18);
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         bottomNavigationBar: BottomNavigationBar(
             backgroundColor: Colors.teal,
             items: <BottomNavigationBarItem>[
@@ -222,7 +223,7 @@ class _CancelAppointment extends State<CancelAppointment> {
                                             style: ButtonStyle(
                                                 fixedSize:
                                                     MaterialStateProperty.all(
-                                                        const Size(100, 50)),
+                                                        const Size(130, 50)),
                                                 shape: MaterialStateProperty.all<
                                                         RoundedRectangleBorder>(
                                                     RoundedRectangleBorder(
